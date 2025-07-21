@@ -134,7 +134,7 @@ This makes local learning and demos easier.
 1. **Clone the repo**
 
    ```bash
-   git clone https://github.com/your-username/NumPyMasterPro.git
+   git clone https://github.com/SatvikPraveen/NumPyMasterPro.git
    cd NumPyMasterPro
    ```
 
