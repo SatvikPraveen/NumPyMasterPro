@@ -1,0 +1,155 @@
+# 🧠 NumPyMasterPro
+
+**NumPyMasterPro** is a comprehensive, modular, and hands-on project designed to help you **master NumPy from first principles to real-world applications**.
+
+This project isn't just a learning exercise — it's a **complete reference toolkit**, **interview-ready resource**, and a **portfolio-quality project** that showcases your fluency with one of Python’s most essential libraries for scientific computing and data analysis.
+
+---
+
+## 🚀 Why This Project Matters
+
+> Most learners stop at tutorials. This repository takes you further — by combining theory, implementation, real-world use cases, and production practices in one place.
+
+✅ Covers **100% of NumPy's essential concepts**
+✅ Demonstrates **clean project structure and modular code reuse**
+✅ Includes **interview-ready topics** like broadcasting, vectorization, and matrix algebra
+✅ Provides **Jupyter notebooks + Python utility scripts + cheat sheet**
+✅ Ends with a **K-Means algorithm from scratch using NumPy only** — great for resumes
+
+---
+
+## 📌 Project Objectives
+
+- 🔍 **Master Core NumPy Syntax** through progressively organized notebooks
+- 🔄 **Understand Memory Efficiency**: broadcasting, vectorization, views vs. copies
+- ⚙️ **Practice Clean Coding** using reusable utility scripts in `/scripts`
+- 🧠 **Explore Real-World Scenarios**: regression, simulations, image ops, clustering
+- 📂 **Build a Reference Toolkit** for revision, projects, and technical interviews
+
+---
+
+## 🧱 Folder Structure
+
+```bash
+NumPyMasterPro/
+├── notebooks/                 # 📓 Themed Jupyter Notebooks (core + advanced topics)
+├── scripts/                   # 🛠️ Modular, reusable Python utilities
+├── datasets/                  # 📁 Data files used in notebooks
+├── docs/                      # 📜 Cheat sheets and markdown-based quick notes
+├── requirements.txt           # 📦 Python package requirements
+├── .env.example               # 🛡️ Sample env file for Docker-based config (login-free setup)
+├── docker-compose.yml         # 🐳 Multi-container orchestration for Jupyter Lab
+├── Dockerfile                 # 🐳 Docker image setup using Jupyter minimal notebook base
+├── .gitignore                 # ❌ Files to exclude from version control
+└── README.md                  # 📘 This file!
+```
+
+---
+
+## 🧮 Topics Covered
+
+| Notebook                          | Description                                                 |
+| --------------------------------- | ----------------------------------------------------------- |
+| `01_array_basics.ipynb`           | Array creation, types, shapes, memory attributes            |
+| `02_indexing_slicing.ipynb`       | Indexing, slicing, masking, `.take()`, `.put()`             |
+| `03_array_manipulation.ipynb`     | Reshaping, stacking, splitting, tiling, padding             |
+| `04_math_operations.ipynb`        | Element-wise ops, aggregation, rounding, broadcasting       |
+| `05_linear_algebra.ipynb`         | Dot product, inverse, norms, eig/SVD, solving systems       |
+| `06_statistics_probability.ipynb` | Descriptive stats, histograms, correlations, sampling       |
+| `07_masking_conditions.ipynb`     | `where`, `select`, logical ops, `nonzero`, `isfinite`, etc. |
+| `08_file_io_memory.ipynb`         | `save`, `load`, `memmap`, vectorize, views vs. copies       |
+| `09_real_world_cases.ipynb`       | Regression, image ops, time-series scaling, simulations     |
+| `10_kmeans_from_scratch.ipynb`    | 🎯 BONUS: K-Means Clustering implemented using NumPy only   |
+
+---
+
+## 🧰 Utility Scripts
+
+| File                      | Purpose                                                     |
+| ------------------------- | ----------------------------------------------------------- |
+| `array_utils.py`          | Functions for inspecting arrays, creating identity matrices |
+| `linear_algebra_utils.py` | Solving systems, matrix multiplication, inversion           |
+| `stats_utils.py`          | Z-score, normalization, summary statistics                  |
+
+You can import these into any project:
+
+```python
+from scripts.array_utils import describe_array
+```
+
+---
+
+## 🐳 Docker-Based Setup (Optional)
+
+Prefer running in a **containerized Jupyter Lab** environment?
+
+```bash
+docker compose up --build
+```
+
+Then open the browser at:
+👉 [http://localhost:8889](http://localhost:8889) (or your configured port)
+
+> You can also stop the container with:
+
+```bash
+docker compose down --volumes --remove-orphans
+```
+
+---
+
+## 🔐 Authentication & Security
+
+This project is configured for **login-free use** of Jupyter Lab — no password or token required.
+This makes local learning and demos easier.
+
+- ✅ `.env.example` is included with recommended settings.
+- 🚫 `.env` is deliberately **excluded** from the repo (add your own if needed).
+- 🛡️ You may modify the `docker-compose.yml` to add a token or hashed password later.
+
+---
+
+## 🧠 Recommended Use
+
+- ✍️ Study each notebook sequentially and refer back as needed
+- 🧪 Use `/scripts/` functions in other projects or interview tasks
+- 🧵 Treat `docs/numpy_cheatsheet.md` as your quick review guide
+- 🧠 Use `10_kmeans_from_scratch.ipynb` in your resume to show NumPy fluency
+- 💡 Add your own notebooks (e.g., PCA from scratch, numerical integration, etc.)
+
+---
+
+## 🔧 Getting Started (Without Docker)
+
+1. **Clone the repo**
+
+   ```bash
+   git clone https://github.com/your-username/NumPyMasterPro.git
+   cd NumPyMasterPro
+   ```
+
+2. **Create & activate a virtual environment**
+
+   ```bash
+   python -m venv venv
+   source venv/bin/activate        # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+
+3. **Launch the Jupyter Lab interface**
+
+   ```bash
+   jupyter lab
+   ```
+
+---
+
+## 📄 License
+
+MIT License © 2025 [Satvik Praveen](https://www.linkedin.com/in/satvikpraveen)
+
+---
+
+## 🌟 Showcase & Star
+
+If this project helped you master NumPy, feel free to ⭐ it and share it with others!

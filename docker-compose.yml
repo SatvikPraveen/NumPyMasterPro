@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  numpy-masterpro:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8889:8888" # Local:Container — change host port if 8889 is in use
+    volumes:
+      - .:/home/jovyan/work
+    container_name: numpymasterpro
+    command: >
+      start-notebook.sh
+      --NotebookApp.token=''
+      --NotebookApp.password=''
+      --NotebookApp.allow_origin='*'
+      --NotebookApp.notebook_dir='/home/jovyan/work'
