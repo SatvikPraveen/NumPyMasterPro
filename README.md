@@ -1,5 +1,15 @@
 # 🧠 NumPyMasterPro
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-darkgreen.svg)](https://www.python.org/)
+[![Issues](https://img.shields.io/github/issues/SatvikPraveen/NumPyMasterPro?color=yellowgreen)](https://github.com/SatvikPraveen/NumPyMasterPro/issues)
+[![Jupyter Notebooks](https://img.shields.io/badge/Jupyter-Notebook-orange.svg)](https://jupyter.org/)
+[![Docker Ready](https://img.shields.io/badge/Docker-Ready-blueviolet.svg)](https://www.docker.com/)
+[![NumPy Focused](https://img.shields.io/badge/NumPy-100%25-brightgreen.svg)](https://numpy.org/)
+[![Real-World Use Cases](https://img.shields.io/badge/Use%20Cases-Included-ff69b4.svg)](#)
+[![K-Means Project](https://img.shields.io/badge/Project-K--Means%20From%20Scratch-9cf.svg)](#)
+
+
 **NumPyMasterPro** is a comprehensive, modular, and hands-on project designed to help you **master NumPy from first principles to real-world applications**.
 
 This project isn't just a learning exercise — it's a **complete reference toolkit**, **interview-ready resource**, and a **portfolio-quality project** that showcases your fluency with one of Python’s most essential libraries for scientific computing and data analysis.
