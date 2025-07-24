@@ -9,7 +9,7 @@ __pycache__/
 
 # Virtual environment
 venv/
-numpy-env/
+numpy_env/
 
 # Data files
 datasets/*.npy
