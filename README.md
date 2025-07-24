@@ -9,7 +9,6 @@
 [![Real-World Use Cases](https://img.shields.io/badge/Use%20Cases-Included-ff69b4.svg)](#)
 [![K-Means Project](https://img.shields.io/badge/Project-K--Means%20From%20Scratch-9cf.svg)](#)
 
-
 **NumPyMasterPro** is a comprehensive, modular, and hands-on project designed to help you **master NumPy from first principles to real-world applications**.
 
 This project isn't just a learning exercise — it's a **complete reference toolkit**, **interview-ready resource**, and a **portfolio-quality project** that showcases your fluency with one of Python’s most essential libraries for scientific computing and data analysis.
@@ -20,11 +19,11 @@ This project isn't just a learning exercise — it's a **complete reference tool
 
 > Most learners stop at tutorials. This repository takes you further — by combining theory, implementation, real-world use cases, and production practices in one place.
 
-✅ Covers **100% of NumPy's essential concepts**
-✅ Demonstrates **clean project structure and modular code reuse**
-✅ Includes **interview-ready topics** like broadcasting, vectorization, and matrix algebra
-✅ Provides **Jupyter notebooks + Python utility scripts + cheat sheet**
-✅ Ends with a **K-Means algorithm from scratch using NumPy only** — great for resumes
+✅ Covers **100% of NumPy's essential concepts**  
+✅ Demonstrates **clean project structure and modular code reuse**  
+✅ Includes **interview-ready topics** like broadcasting, vectorization, and matrix algebra  
+✅ Provides **Jupyter notebooks + Python utility scripts + cheat sheet**  
+✅ Ends with a **K-Means algorithm from scratch with Elbow Method** — great for resumes
 
 ---
 
@@ -58,34 +57,51 @@ NumPyMasterPro/
 
 ## 🧮 Topics Covered
 
-| Notebook                          | Description                                                 |
-| --------------------------------- | ----------------------------------------------------------- |
-| `01_array_basics.ipynb`           | Array creation, types, shapes, memory attributes            |
-| `02_indexing_slicing.ipynb`       | Indexing, slicing, masking, `.take()`, `.put()`             |
-| `03_array_manipulation.ipynb`     | Reshaping, stacking, splitting, tiling, padding             |
-| `04_math_operations.ipynb`        | Element-wise ops, aggregation, rounding, broadcasting       |
-| `05_linear_algebra.ipynb`         | Dot product, inverse, norms, eig/SVD, solving systems       |
-| `06_statistics_probability.ipynb` | Descriptive stats, histograms, correlations, sampling       |
-| `07_masking_conditions.ipynb`     | `where`, `select`, logical ops, `nonzero`, `isfinite`, etc. |
-| `08_file_io_memory.ipynb`         | `save`, `load`, `memmap`, vectorize, views vs. copies       |
-| `09_real_world_cases.ipynb`       | Regression, image ops, time-series scaling, simulations     |
-| `10_kmeans_from_scratch.ipynb`    | 🎯 BONUS: K-Means Clustering implemented using NumPy only   |
+| Notebook                          | Description                                                  |
+| --------------------------------- | ------------------------------------------------------------ |
+| `01_array_basics.ipynb`           | Array creation, types, shapes, memory attributes             |
+| `02_indexing_slicing.ipynb`       | Indexing, slicing, masking, `.take()`, `.put()`              |
+| `03_array_manipulation.ipynb`     | Reshaping, stacking, splitting, tiling, padding              |
+| `04_math_operations.ipynb`        | Element-wise ops, aggregation, rounding, broadcasting        |
+| `05_linear_algebra.ipynb`         | Dot product, inverse, norms, eig/SVD, solving systems        |
+| `06_statistics_probability.ipynb` | Descriptive stats, histograms, correlations, sampling        |
+| `07_masking_conditions.ipynb`     | `where`, `select`, logical ops, `nonzero`, `isfinite`, etc.  |
+| `08_file_io_memory.ipynb`         | `save`, `load`, `memmap`, vectorize, views vs. copies        |
+| `09_real_world_cases.ipynb`       | Regression, image ops, time-series scaling, simulations      |
+| `10_kmeans_from_scratch.ipynb`    | 🎯 BONUS: K-Means Clustering + Elbow Method using NumPy only |
 
 ---
 
 ## 🧰 Utility Scripts
 
-| File                      | Purpose                                                     |
-| ------------------------- | ----------------------------------------------------------- |
-| `array_utils.py`          | Functions for inspecting arrays, creating identity matrices |
-| `linear_algebra_utils.py` | Solving systems, matrix multiplication, inversion           |
-| `stats_utils.py`          | Z-score, normalization, summary statistics                  |
+| File                      | Purpose                                                        |
+| ------------------------- | -------------------------------------------------------------- |
+| `array_utils.py`          | Inspect shapes, types, identities, and metadata                |
+| `linear_algebra_utils.py` | Matrix algebra: dot, inverse, SVD, eigenvalues                 |
+| `math_utils.py`           | Element-wise math: power, root, trig, rounding, logs, exponent |
+| `aggregation_utils.py`    | Sum, mean, std, var, min, max — global & axis-wise             |
+| `stats_utils.py`          | Z-score, normalization, correlation, histogram bins            |
+| `logical_utils.py`        | Boolean logic, masking, conditionals (`any`, `all`, `where`)   |
+| `kmeans_utils.py`         | K-Means from scratch, inertia calculation, and centroid init   |
 
-You can import these into any project:
+Example usage:
 
 ```python
-from scripts.array_utils import describe_array
+from scripts.kmeans_utils import kmeans, compute_inertia
 ```
+
+---
+
+## 🎛️ Streamlit Frontend (Interactive Demo)
+
+You can try the K-Means algorithm with different datasets or number of clusters using:
+
+```bash
+streamlit run kmeans_app.py
+```
+
+This allows you to upload `.csv` files, set cluster count, and visualize results in real time.
+Great for experiments, education, and showcasing clustering interactively.
 
 ---
 
@@ -98,7 +114,7 @@ docker compose up --build
 ```
 
 Then open the browser at:
-👉 [http://localhost:8889](http://localhost:8889) (or your configured port)
+👉 [http://localhost:8889](http://localhost:8889)
 
 > You can also stop the container with:
 
@@ -111,7 +127,6 @@ docker compose down --volumes --remove-orphans
 ## 🔐 Authentication & Security
 
 This project is configured for **login-free use** of Jupyter Lab — no password or token required.
-This makes local learning and demos easier.
 
 - ✅ `.env.example` is included with recommended settings.
 - 🚫 `.env` is deliberately **excluded** from the repo (add your own if needed).
