@@ -92,3 +92,11 @@ def histogram_binning(arr: np.ndarray, bins: int = 5) -> Tuple[np.ndarray, np.nd
 def compute_bincount(arr: np.ndarray) -> np.ndarray:
     """Returns the count of each non-negative integer value."""
     return np.bincount(arr)
+
+def standardize_rows(arr):
+    """
+    Standardizes each row of a 2D NumPy array to mean=0, std=1.
+    """
+    means = arr.mean(axis=1, keepdims=True)
+    stds = arr.std(axis=1, keepdims=True)
+    return (arr - means) / stds

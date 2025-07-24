@@ -88,8 +88,16 @@ def pseudo_inverse(matrix: np.ndarray) -> np.ndarray:
     return np.linalg.pinv(matrix)
 
 
-# ✅ Optional: Pretty Print
+# ✅ Pretty Print
 def print_matrix_with_header(mat: np.ndarray, header: str = "Matrix") -> None:
     """Displays matrix with a visual header for clarity."""
     print(f"\n🧾 {header}:\n{mat}")
-    
+
+
+def closed_form_linear_regression(X, y):
+    """
+    Compute parameters for linear regression using the normal equation:
+    w = (XᵀX)^(-1)Xᵀy
+    """
+    X_b = np.c_[np.ones((X.shape[0], 1)), X]
+    return np.linalg.inv(X_b.T @ X_b) @ X_b.T @ y
