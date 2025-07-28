@@ -12,11 +12,11 @@ venv/
 numpy_env/
 
 # Data files
-datasets/*.npy
-datasets/*.npz
-datasets/*.txt
-datasets/*.csv
-datasets/*.dat
+# datasets/*.npy
+# datasets/*.npz
+# datasets/*.txt
+# datasets/*.csv
+# datasets/*.dat
 
 # OS-specific files
 .DS_Store
