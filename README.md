@@ -171,7 +171,7 @@ This project is configured for **login-free use** of Jupyter Lab — no password
 
 ## 📄 License
 
-MIT License © 2025 [Satvik Praveen](https://www.linkedin.com/in/satvikpraveen)
+This project is licensed under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0). See the [LICENSE](./LICENSE) file for more details.
 
 ---
 
