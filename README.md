@@ -45,7 +45,8 @@ NumPyMasterPro/
 ├── scripts/                   # 🛠️ Modular, reusable Python utilities
 ├── datasets/                  # 📁 Data files used in notebooks
 ├── docs/                      # 📜 Cheat sheets and markdown-based quick notes
-├── requirements.txt           # 📦 Python package requirements
+├── requirements.txt           # 📦 Minimal dependencies to run the project
+├── requirements_dev.txt       # 📦 Full dev environment
 ├── .env.example               # 🛡️ Sample env file for Docker-based config (login-free setup)
 ├── docker-compose.yml         # 🐳 Multi-container orchestration for Jupyter Lab
 ├── Dockerfile                 # 🐳 Docker image setup using Jupyter minimal notebook base
