@@ -10,6 +10,17 @@ __pycache__/
 # Virtual environment
 venv/
 numpy_env/
+env/
+ENV/
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+*.cover
+.hypothesis/
 
 # Data files
 # datasets/*.npy
@@ -21,3 +32,24 @@ numpy_env/
 # OS-specific files
 .DS_Store
 Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Logs
+*.log

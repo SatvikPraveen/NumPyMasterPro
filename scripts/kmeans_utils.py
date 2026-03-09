@@ -65,10 +65,45 @@ def kmeans(X, k=3, max_iters=100, tol=1e-4):
 
     return centroids, labels
 
+def compute_cluster_inertia(X, centroids, labels):
+    """
+    Compute inertia (within-cluster sum of squares) for a given clustering.
+    
+    Parameters:
+    -----------
+    X : np.ndarray
+        Data points (n_samples, n_features)
+    centroids : np.ndarray
+        Cluster centroids (k, n_features)
+    labels : np.ndarray
+        Cluster assignments for each point (n_samples,)
+    
+    Returns:
+    --------
+    float
+        Total within-cluster sum of squared distances (inertia)
+    """
+    return np.sum((X - centroids[labels])**2)
+
 def compute_inertia(X, k_range):
+    """
+    Compute inertia for multiple k values (used for Elbow Method).
+    
+    Parameters:
+    -----------
+    X : np.ndarray
+        Data points (n_samples, n_features)
+    k_range : range or list
+        Range of k values to test
+    
+    Returns:
+    --------
+    list
+        List of inertia values for each k
+    """
     inertias = []
     for k in k_range:
         centroids, labels = kmeans(X, k=k)
-        inertia = np.sum((X - centroids[labels])**2)
+        inertia = compute_cluster_inertia(X, centroids, labels)
         inertias.append(inertia)
     return inertias

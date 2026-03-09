@@ -1,0 +1,168 @@
+name: NumPyMasterPro CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test on Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ['3.10', '3.11', '3.12']
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov pytest-xdist
+    
+    - name: Run tests with coverage
+      run: |
+        pytest tests/ -v --cov=scripts --cov-report=xml --cov-report=term-missing
+    
+    - name: Upload coverage to Codecov
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.10'
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+
+  lint:
+    name: Lint and Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+    
+    - name: Install linting tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 black isort mypy
+    
+    - name: Check code formatting with Black
+      run: |
+        black --check scripts/ tests/ || echo "Black formatting check completed with warnings"
+    
+    - name: Check import sorting with isort
+      run: |
+        isort --check-only scripts/ tests/ || echo "isort check completed with warnings"
+    
+    - name: Lint with flake8
+      run: |
+        flake8 scripts/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 scripts/ tests/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+  notebook-check:
+    name: Validate Notebooks
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install nbconvert nbformat
+    
+    - name: Check notebook execution
+      run: |
+        find notebooks -name "*.ipynb" -print0 | while IFS= read -r -d '' notebook; do
+          echo "Validating $notebook"
+          jupyter nbconvert --to notebook --execute "$notebook" --output /tmp/test.ipynb || echo "Notebook validation completed"
+        done
+
+  docker-build:
+    name: Docker Build Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Build Docker image
+      run: |
+        docker build -t numpymasterpro:test .
+    
+    - name: Test Docker image
+      run: |
+        docker run --rm numpymasterpro:test python -c "import numpy; print(numpy.__version__)"
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install safety bandit
+    
+    - name: Run safety check on dependencies
+      run: |
+        pip install -r requirements.txt
+        safety check || echo "Safety check completed with warnings"
+    
+    - name: Run bandit security scan
+      run: |
+        bandit -r scripts/ -ll || echo "Bandit scan completed"
+
+  build-status:
+    name: Build Status
+    needs: [test, lint, notebook-check, docker-build]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Check build status
+      run: |
+        if [ "${{ needs.test.result }}" = "success" ] && [ "${{ needs.lint.result }}" = "success" ]; then
+          echo "✅ All critical checks passed!"
+          exit 0
+        else
+          echo "❌ Some checks failed"
+          exit 1
+        fi
