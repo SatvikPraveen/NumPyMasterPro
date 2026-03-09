@@ -2,6 +2,8 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-darkgreen.svg)](https://www.python.org/)
+[![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-brightgreen.svg)](https://github.com/SatvikPraveen/NumPyMasterPro/actions)
+[![Tests](https://img.shields.io/badge/Tests-Pytest-blue.svg)](https://docs.pytest.org/)
 [![Issues](https://img.shields.io/github/issues/SatvikPraveen/NumPyMasterPro?color=yellowgreen)](https://github.com/SatvikPraveen/NumPyMasterPro/issues)
 [![Jupyter Notebooks](https://img.shields.io/badge/Jupyter-Notebook-orange.svg)](https://jupyter.org/)
 [![Docker Ready](https://img.shields.io/badge/Docker-Ready-blueviolet.svg)](https://www.docker.com/)
@@ -88,7 +90,11 @@ NumPyMasterPro/
 Example usage:
 
 ```python
+# Direct module import
 from scripts.kmeans_utils import kmeans, compute_inertia
+
+# Or use convenient re-exports from __init__.py
+from scripts import kmeans, describe_array, minmax_normalize
 ```
 
 ---
@@ -167,6 +173,57 @@ This project is configured for **login-free use** of Jupyter Lab — no password
    ```bash
    jupyter lab
    ```
+
+---
+
+## 🧪 Testing
+
+**NumPyMasterPro** includes a comprehensive test suite with **80+ unit tests** covering all utility modules.
+
+### Quick Testing
+
+```bash
+# Install test dependencies
+pip install pytest pytest-cov
+
+# Run all tests
+pytest
+
+# Run with coverage
+pytest --cov=scripts --cov-report=term-missing
+```
+
+### Using Makefile Commands
+
+```bash
+make test              # Run all tests
+make test-coverage     # Generate coverage report
+make lint              # Check code quality
+make format            # Auto-format code
+make all               # Run complete checks
+```
+
+### Test Coverage
+
+- ✅ Array utilities (describe, compare, flags)
+- ✅ Logical operations (any, all, where, masking)
+- ✅ K-Means algorithm (clustering, inertia)
+- ✅ Math operations (arithmetic, trig, rounding)
+- ✅ Linear algebra (matrices, eigenvalues, SVD)
+- ✅ Statistics (normalization, correlation)
+
+📖 **Detailed testing guide:** [TESTING.md](./TESTING.md)
+
+### CI/CD Pipeline
+
+Automated testing runs on:
+- 🔄 Every push to `main`/`develop`
+- 🔄 All pull requests  
+- ✅ Multi-OS (Ubuntu, macOS, Windows)
+- ✅ Python 3.10, 3.11, 3.12
+- ✅ Code linting & formatting checks
+- ✅ Notebook validation
+- ✅ Docker build verification
 
 ---
 
