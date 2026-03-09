@@ -212,7 +212,7 @@ make all               # Run complete checks
 - ✅ Linear algebra (matrices, eigenvalues, SVD)
 - ✅ Statistics (normalization, correlation)
 
-📖 **Detailed testing guide:** [TESTING.md](./TESTING.md)
+📖 **Detailed testing guide:** [TESTING.md](docs/TESTING.md)
 
 ### CI/CD Pipeline
 
