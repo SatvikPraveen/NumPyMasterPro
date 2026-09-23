@@ -1,8 +1,9 @@
 """
 Pytest configuration and shared fixtures for NumPyMasterPro tests
 """
-import pytest
+
 import numpy as np
+import pytest
 
 
 @pytest.fixture
@@ -40,9 +41,9 @@ def array_with_infs():
 def clustering_data():
     """Fixture providing simple clustering data"""
     np.random.seed(42)
-    cluster1 = np.random.randn(30, 2) + [0, 0]
-    cluster2 = np.random.randn(30, 2) + [5, 5]
-    cluster3 = np.random.randn(30, 2) + [5, 0]
+    cluster1 = [*np.random.randn(30, 2), 0, 0]
+    cluster2 = [*np.random.randn(30, 2), 5, 5]
+    cluster3 = [*np.random.randn(30, 2), 5, 0]
     return np.vstack([cluster1, cluster2, cluster3])
 
 
@@ -51,9 +52,5 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "slow: marks tests as slow (deselect with '-m \"not slow\"')"
     )
-    config.addinivalue_line(
-        "markers", "integration: marks tests as integration tests"
-    )
-    config.addinivalue_line(
-        "markers", "unit: marks tests as unit tests"
-    )
+    config.addinivalue_line("markers", "integration: marks tests as integration tests")
+    config.addinivalue_line("markers", "unit: marks tests as unit tests")

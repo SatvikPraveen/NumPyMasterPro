@@ -17,6 +17,7 @@ def dot_product(a: np.ndarray, b: np.ndarray) -> np.number:
     """Computes the dot product of two vectors."""
     return np.dot(a, b)
 
+
 def matmul_product(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     """Performs matrix multiplication (handles broadcasting)."""
     return np.matmul(a, b)
@@ -33,12 +34,14 @@ def compute_inverse(matrix: np.ndarray) -> np.ndarray:
     """Computes the inverse of a square matrix, if invertible."""
     try:
         return np.linalg.inv(matrix)
-    except np.linalg.LinAlgError:
-        raise ValueError("Matrix is not invertible.")
+    except np.linalg.LinAlgError as err:
+        raise ValueError("Matrix is not invertible.") from err
+
 
 def compute_determinant(matrix: np.ndarray) -> float:
     """Returns the determinant of a square matrix."""
     return np.linalg.det(matrix)
+
 
 def compute_rank(matrix: np.ndarray) -> int:
     """Computes the rank of a matrix."""
@@ -56,6 +59,7 @@ def l2_norm(vector: np.ndarray) -> float:
     """Computes the L2 (Euclidean) norm of a vector."""
     return np.linalg.norm(vector)
 
+
 def l1_norm(vector: np.ndarray) -> float:
     """Computes the L1 (Manhattan) norm of a vector."""
     return np.linalg.norm(vector, ord=1)
@@ -69,8 +73,8 @@ def solve_system(A: np.ndarray, b: np.ndarray) -> np.ndarray:
     """
     try:
         return np.linalg.solve(A, b)
-    except np.linalg.LinAlgError:
-        raise ValueError("System cannot be solved: matrix is singular or inconsistent.")
+    except np.linalg.LinAlgError as err:
+        raise ValueError("System cannot be solved: matrix is singular or inconsistent.") from err
 
 
 # ✅ Singular Value Decomposition (SVD)

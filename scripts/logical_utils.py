@@ -1,22 +1,24 @@
+from typing import Any
+
 import numpy as np
-from typing import Any, Union
+
 
 def filter_valid_positive(arr: np.ndarray) -> np.ndarray:
     """Returns values that are finite and greater than 0."""
     return arr[np.isfinite(arr) & (arr > 0)]
 
+
 def classify_scores(arr: np.ndarray) -> np.ndarray:
     """Classifies scores using vectorized logic."""
-    return np.select(
-        [arr >= 85, arr >= 60],
-        ["Excellent", "Average"],
-        default="Fail"
-    )
+    return np.select([arr >= 85, arr >= 60], ["Excellent", "Average"], default="Fail")
 
-def any_condition(arr: np.ndarray, condition: np.ndarray = None, axis: int = None) -> Union[bool, np.ndarray]:
+
+def any_condition(
+    arr: np.ndarray, condition: np.ndarray = None, axis: int | None = None
+) -> bool | np.ndarray:
     """
     Test whether any array element along a given axis evaluates to True.
-    
+
     Parameters:
     -----------
     arr : np.ndarray
@@ -25,12 +27,12 @@ def any_condition(arr: np.ndarray, condition: np.ndarray = None, axis: int = Non
         Boolean mask to test. If None, tests arr directly
     axis : int, optional
         Axis along which to perform the operation
-    
+
     Returns:
     --------
     bool or np.ndarray
         True if any element is True, otherwise False
-        
+
     Examples:
     ---------
     >>> arr = np.array([1, 2, 3, 4, 5])
@@ -41,10 +43,13 @@ def any_condition(arr: np.ndarray, condition: np.ndarray = None, axis: int = Non
         return np.any(condition, axis=axis)
     return np.any(arr, axis=axis)
 
-def all_condition(arr: np.ndarray, condition: np.ndarray = None, axis: int = None) -> Union[bool, np.ndarray]:
+
+def all_condition(
+    arr: np.ndarray, condition: np.ndarray = None, axis: int | None = None
+) -> bool | np.ndarray:
     """
     Test whether all array elements along a given axis evaluate to True.
-    
+
     Parameters:
     -----------
     arr : np.ndarray
@@ -53,12 +58,12 @@ def all_condition(arr: np.ndarray, condition: np.ndarray = None, axis: int = Non
         Boolean mask to test. If None, tests arr directly
     axis : int, optional
         Axis along which to perform the operation
-    
+
     Returns:
     --------
     bool or np.ndarray
         True if all elements are True, otherwise False
-        
+
     Examples:
     ---------
     >>> arr = np.array([1, 2, 3, 4, 5])
@@ -69,10 +74,11 @@ def all_condition(arr: np.ndarray, condition: np.ndarray = None, axis: int = Non
         return np.all(condition, axis=axis)
     return np.all(arr, axis=axis)
 
-def where_condition(condition: np.ndarray, x: Any = None, y: Any = None) -> Union[tuple, np.ndarray]:
+
+def where_condition(condition: np.ndarray, x: Any = None, y: Any = None) -> tuple | np.ndarray:
     """
     Return elements chosen from x or y depending on condition.
-    
+
     Parameters:
     -----------
     condition : np.ndarray
@@ -81,13 +87,13 @@ def where_condition(condition: np.ndarray, x: Any = None, y: Any = None) -> Unio
         Values to use where condition is True
     y : scalar or array, optional
         Values to use where condition is False
-    
+
     Returns:
     --------
     tuple or np.ndarray
         If x and y are provided, returns array with selected values
         Otherwise, returns tuple of indices where condition is True
-        
+
     Examples:
     ---------
     >>> arr = np.array([1, 2, 3, 4, 5])
@@ -98,10 +104,11 @@ def where_condition(condition: np.ndarray, x: Any = None, y: Any = None) -> Unio
         return np.where(condition, x, y)
     return np.where(condition)
 
-def mask_by_value(arr: np.ndarray, value: Any, operator: str = '==') -> np.ndarray:
+
+def mask_by_value(arr: np.ndarray, value: Any, operator: str = "==") -> np.ndarray:
     """
     Create a boolean mask based on a comparison operator.
-    
+
     Parameters:
     -----------
     arr : np.ndarray
@@ -110,48 +117,49 @@ def mask_by_value(arr: np.ndarray, value: Any, operator: str = '==') -> np.ndarr
         Value to compare against
     operator : str
         Comparison operator: '==', '!=', '>', '<', '>=', '<='
-    
+
     Returns:
     --------
     np.ndarray
         Boolean mask array
-        
+
     Examples:
     ---------
     >>> arr = np.array([1, 2, 3, 4, 5])
-    >>> mask_by_value(arr, 3, '>')
+    >>> mask_by_value(arr, 3, ">")
     array([False, False, False,  True,  True])
     """
     operators = {
-        '==': arr == value,
-        '!=': arr != value,
-        '>': arr > value,
-        '<': arr < value,
-        '>=': arr >= value,
-        '<=': arr <= value
+        "==": arr == value,
+        "!=": arr != value,
+        ">": arr > value,
+        "<": arr < value,
+        ">=": arr >= value,
+        "<=": arr <= value,
     }
-    
+
     if operator not in operators:
         raise ValueError(f"Invalid operator '{operator}'. Must be one of: {list(operators.keys())}")
-    
+
     return operators[operator]
+
 
 def count_matching(arr: np.ndarray, condition: np.ndarray) -> int:
     """
     Count the number of elements that match a condition.
-    
+
     Parameters:
     -----------
     arr : np.ndarray
         Input array
     condition : np.ndarray
         Boolean condition mask
-    
+
     Returns:
     --------
     int
         Number of True values in the condition
-        
+
     Examples:
     ---------
     >>> arr = np.array([1, 2, 3, 4, 5])
@@ -160,22 +168,23 @@ def count_matching(arr: np.ndarray, condition: np.ndarray) -> int:
     """
     return np.count_nonzero(condition)
 
+
 def find_indices(arr: np.ndarray, condition: np.ndarray = None) -> tuple:
     """
     Find indices of nonzero elements or elements matching a condition.
-    
+
     Parameters:
     -----------
     arr : np.ndarray
         Input array
     condition : np.ndarray, optional
         Boolean condition mask. If None, finds nonzero elements in arr
-    
+
     Returns:
     --------
     tuple
         Tuple of arrays, one for each dimension, containing indices
-        
+
     Examples:
     ---------
     >>> arr = np.array([1, 0, 3, 0, 5])
@@ -186,20 +195,21 @@ def find_indices(arr: np.ndarray, condition: np.ndarray = None) -> tuple:
         return np.nonzero(condition)
     return np.nonzero(arr)
 
+
 def check_nan(arr: np.ndarray) -> np.ndarray:
     """
     Test element-wise for NaN and return result as a boolean array.
-    
+
     Parameters:
     -----------
     arr : np.ndarray
         Input array
-    
+
     Returns:
     --------
     np.ndarray
         Boolean array where True indicates NaN values
-        
+
     Examples:
     ---------
     >>> arr = np.array([1, 2, np.nan, 4])
@@ -208,20 +218,21 @@ def check_nan(arr: np.ndarray) -> np.ndarray:
     """
     return np.isnan(arr)
 
+
 def check_inf(arr: np.ndarray) -> np.ndarray:
     """
     Test element-wise for positive or negative infinity.
-    
+
     Parameters:
     -----------
     arr : np.ndarray
         Input array
-    
+
     Returns:
     --------
     np.ndarray
         Boolean array where True indicates infinite values
-        
+
     Examples:
     ---------
     >>> arr = np.array([1, 2, np.inf, -np.inf, 5])
@@ -230,20 +241,21 @@ def check_inf(arr: np.ndarray) -> np.ndarray:
     """
     return np.isinf(arr)
 
+
 def check_finite(arr: np.ndarray) -> np.ndarray:
     """
     Test element-wise for finiteness (not infinity and not NaN).
-    
+
     Parameters:
     -----------
     arr : np.ndarray
         Input array
-    
+
     Returns:
     --------
     np.ndarray
         Boolean array where True indicates finite values
-        
+
     Examples:
     ---------
     >>> arr = np.array([1, 2, np.nan, np.inf, 5])
@@ -252,22 +264,23 @@ def check_finite(arr: np.ndarray) -> np.ndarray:
     """
     return np.isfinite(arr)
 
-def check_isin(arr: np.ndarray, test_values: Union[list, np.ndarray]) -> np.ndarray:
+
+def check_isin(arr: np.ndarray, test_values: list | np.ndarray) -> np.ndarray:
     """
     Calculate element-wise whether values are contained in test_values.
-    
+
     Parameters:
     -----------
     arr : np.ndarray
         Input array
     test_values : list or np.ndarray
         Values to test for membership
-    
+
     Returns:
     --------
     np.ndarray
         Boolean array indicating membership in test_values
-        
+
     Examples:
     ---------
     >>> arr = np.array([1, 2, 3, 4, 5])
@@ -276,17 +289,18 @@ def check_isin(arr: np.ndarray, test_values: Union[list, np.ndarray]) -> np.ndar
     """
     return np.isin(arr, test_values)
 
+
 def logical_and(arr1: np.ndarray, arr2: np.ndarray) -> np.ndarray:
     """
     Compute element-wise logical AND.
-    
+
     Parameters:
     -----------
     arr1 : np.ndarray
         First input array
     arr2 : np.ndarray
         Second input array
-    
+
     Returns:
     --------
     np.ndarray
@@ -294,17 +308,18 @@ def logical_and(arr1: np.ndarray, arr2: np.ndarray) -> np.ndarray:
     """
     return np.logical_and(arr1, arr2)
 
+
 def logical_or(arr1: np.ndarray, arr2: np.ndarray) -> np.ndarray:
     """
     Compute element-wise logical OR.
-    
+
     Parameters:
     -----------
     arr1 : np.ndarray
         First input array
     arr2 : np.ndarray
         Second input array
-    
+
     Returns:
     --------
     np.ndarray
@@ -312,15 +327,16 @@ def logical_or(arr1: np.ndarray, arr2: np.ndarray) -> np.ndarray:
     """
     return np.logical_or(arr1, arr2)
 
+
 def logical_not(arr: np.ndarray) -> np.ndarray:
     """
     Compute element-wise logical NOT.
-    
+
     Parameters:
     -----------
     arr : np.ndarray
         Input array
-    
+
     Returns:
     --------
     np.ndarray
@@ -328,11 +344,17 @@ def logical_not(arr: np.ndarray) -> np.ndarray:
     """
     return np.logical_not(arr)
 
-def compound_condition(arr: np.ndarray, min_val: float = None, max_val: float = None, 
-                      exclude_nan: bool = True, exclude_inf: bool = True) -> np.ndarray:
+
+def compound_condition(
+    arr: np.ndarray,
+    min_val: float | None = None,
+    max_val: float | None = None,
+    exclude_nan: bool = True,
+    exclude_inf: bool = True,
+) -> np.ndarray:
     """
     Create a compound boolean mask with multiple conditions.
-    
+
     Parameters:
     -----------
     arr : np.ndarray
@@ -345,12 +367,12 @@ def compound_condition(arr: np.ndarray, min_val: float = None, max_val: float = 
         Whether to exclude NaN values
     exclude_inf : bool, default True
         Whether to exclude infinite values
-    
+
     Returns:
     --------
     np.ndarray
         Boolean mask combining all conditions
-        
+
     Examples:
     ---------
     >>> arr = np.array([1, 2, np.nan, 4, np.inf, 6])
@@ -358,17 +380,17 @@ def compound_condition(arr: np.ndarray, min_val: float = None, max_val: float = 
     array([False,  True, False,  True, False, False])
     """
     mask = np.ones(arr.shape, dtype=bool)
-    
+
     if exclude_nan:
         mask &= ~np.isnan(arr)
-    
+
     if exclude_inf:
         mask &= ~np.isinf(arr)
-    
+
     if min_val is not None:
         mask &= arr >= min_val
-    
+
     if max_val is not None:
         mask &= arr <= max_val
-    
+
     return mask

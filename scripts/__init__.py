@@ -12,180 +12,179 @@ from scripts.linear_algebra_utils import compute_inverse, eigen_decomposition
 """
 
 # Array Utilities
+# Aggregation Utilities
+from .aggregation_utils import (
+    array_max,
+    array_mean,
+    array_min,
+    array_std,
+    array_sum,
+    array_var,
+    axis_mean,
+    axis_sum,
+)
 from .array_utils import (
-    describe_array,
     array_flags,
-    compare_arrays,
     array_summary_table,
+    compare_arrays,
     create_identity_matrix,
+    describe_array,
+)
+
+# I/O Utilities
+from .io_utils import (
+    create_memmap,
+    load_memmap,
+    load_npy,
+    load_npz,
+    load_txt,
+    save_npy,
+    save_npz,
+    save_txt,
+)
+
+# K-Means Utilities
+from .kmeans_utils import (
+    assign_clusters,
+    compute_cluster_inertia,
+    compute_inertia,
+    generate_data,
+    initialize_centroids,
+    kmeans,
+    update_centroids,
 )
 
 # Linear Algebra Utilities
 from .linear_algebra_utils import (
-    dot_product,
-    matmul_product,
-    compute_inverse,
-    compute_determinant,
-    eigen_decomposition,
-    compute_svd,
-    l2_norm,
-    l1_norm,
-    solve_system,
     closed_form_linear_regression,
+    compute_determinant,
+    compute_inverse,
+    compute_svd,
+    dot_product,
+    eigen_decomposition,
+    l1_norm,
+    l2_norm,
+    matmul_product,
+    solve_system,
+)
+
+# Logical Utilities
+from .logical_utils import (
+    all_condition,
+    any_condition,
+    check_finite,
+    check_inf,
+    check_isin,
+    check_nan,
+    classify_scores,
+    compound_condition,
+    count_matching,
+    find_indices,
+    mask_by_value,
+    where_condition,
 )
 
 # Math Utilities
 from .math_utils import (
     add_arrays,
-    multiply_arrays,
-    power_array,
-    sqrt_array,
-    exp_array,
-    natural_log,
-    sin_array,
-    cos_array,
     clip_array,
+    cos_array,
+    exp_array,
+    multiply_arrays,
+    natural_log,
+    power_array,
     round_array,
-)
-
-# Aggregation Utilities
-from .aggregation_utils import (
-    array_sum,
-    array_mean,
-    array_min,
-    array_max,
-    array_std,
-    array_var,
-    axis_sum,
-    axis_mean,
+    sin_array,
+    sqrt_array,
 )
 
 # Statistics Utilities
 from .stats_utils import (
-    summarize_array,
-    minmax_normalize,
-    zscore_normalize,
     compute_correlation,
-    histogram_binning,
-    generate_random_integers,
     generate_normal_distribution,
-)
-
-# Logical Utilities
-from .logical_utils import (
-    any_condition,
-    all_condition,
-    where_condition,
-    mask_by_value,
-    count_matching,
-    find_indices,
-    check_nan,
-    check_inf,
-    check_finite,
-    check_isin,
-    compound_condition,
-    classify_scores,
-)
-
-# K-Means Utilities
-from .kmeans_utils import (
-    kmeans,
-    initialize_centroids,
-    assign_clusters,
-    update_centroids,
-    compute_inertia,
-    compute_cluster_inertia,
-    generate_data,
-)
-
-# I/O Utilities
-from .io_utils import (
-    save_npy,
-    load_npy,
-    save_npz,
-    load_npz,
-    save_txt,
-    load_txt,
-    create_memmap,
-    load_memmap,
+    generate_random_integers,
+    histogram_binning,
+    minmax_normalize,
+    summarize_array,
+    zscore_normalize,
 )
 
 __version__ = "1.0.0"
 
 __all__ = [
-    # Array utilities
-    "describe_array",
-    "array_flags",
-    "compare_arrays",
-    "array_summary_table",
-    "create_identity_matrix",
-    # Linear algebra
-    "dot_product",
-    "matmul_product",
-    "compute_inverse",
-    "compute_determinant",
-    "eigen_decomposition",
-    "compute_svd",
-    "l2_norm",
-    "l1_norm",
-    "solve_system",
-    "closed_form_linear_regression",
     # Math
     "add_arrays",
-    "multiply_arrays",
-    "power_array",
-    "sqrt_array",
-    "exp_array",
-    "natural_log",
-    "sin_array",
-    "cos_array",
-    "clip_array",
-    "round_array",
-    # Aggregation
-    "array_sum",
-    "array_mean",
-    "array_min",
-    "array_max",
-    "array_std",
-    "array_var",
-    "axis_sum",
-    "axis_mean",
-    # Statistics
-    "summarize_array",
-    "minmax_normalize",
-    "zscore_normalize",
-    "compute_correlation",
-    "histogram_binning",
-    "generate_random_integers",
-    "generate_normal_distribution",
+    "all_condition",
     # Logical
     "any_condition",
-    "all_condition",
-    "where_condition",
-    "mask_by_value",
-    "count_matching",
-    "find_indices",
-    "check_nan",
-    "check_inf",
+    "array_flags",
+    "array_max",
+    "array_mean",
+    "array_min",
+    "array_std",
+    # Aggregation
+    "array_sum",
+    "array_summary_table",
+    "array_var",
+    "assign_clusters",
+    "axis_mean",
+    "axis_sum",
     "check_finite",
+    "check_inf",
     "check_isin",
-    "compound_condition",
+    "check_nan",
     "classify_scores",
+    "clip_array",
+    "closed_form_linear_regression",
+    "compare_arrays",
+    "compound_condition",
+    "compute_cluster_inertia",
+    "compute_correlation",
+    "compute_determinant",
+    "compute_inertia",
+    "compute_inverse",
+    "compute_svd",
+    "cos_array",
+    "count_matching",
+    "create_identity_matrix",
+    "create_memmap",
+    # Array utilities
+    "describe_array",
+    # Linear algebra
+    "dot_product",
+    "eigen_decomposition",
+    "exp_array",
+    "find_indices",
+    "generate_data",
+    "generate_normal_distribution",
+    "generate_random_integers",
+    "histogram_binning",
+    "initialize_centroids",
     # K-Means
     "kmeans",
-    "initialize_centroids",
-    "assign_clusters",
-    "update_centroids",
-    "compute_inertia",
-    "compute_cluster_inertia",
-    "generate_data",
+    "l1_norm",
+    "l2_norm",
+    "load_memmap",
+    "load_npy",
+    "load_npz",
+    "load_txt",
+    "mask_by_value",
+    "matmul_product",
+    "minmax_normalize",
+    "multiply_arrays",
+    "natural_log",
+    "power_array",
+    "round_array",
     # I/O
     "save_npy",
-    "load_npy",
     "save_npz",
-    "load_npz",
     "save_txt",
-    "load_txt",
-    "create_memmap",
-    "load_memmap",
+    "sin_array",
+    "solve_system",
+    "sqrt_array",
+    # Statistics
+    "summarize_array",
+    "update_centroids",
+    "where_condition",
+    "zscore_normalize",
 ]

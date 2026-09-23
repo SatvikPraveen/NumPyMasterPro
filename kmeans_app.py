@@ -1,8 +1,9 @@
-import streamlit as st
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from scripts.kmeans_utils import kmeans, initialize_centroids, assign_clusters, update_centroids
+import streamlit as st
+
+from scripts.kmeans_utils import kmeans
 
 st.title("🧠 K-Means Clustering Explorer")
 
@@ -28,9 +29,11 @@ if uploaded_file:
 
             for i in range(k):
                 cluster_data = data[labels == i]
-                plt.scatter(cluster_data[:, 0], cluster_data[:, 1], label=f"Cluster {i+1}")
+                plt.scatter(cluster_data[:, 0], cluster_data[:, 1], label=f"Cluster {i + 1}")
 
-            plt.scatter(centroids[:, 0], centroids[:, 1], c='black', s=200, marker='X', label='Centroids')
+            plt.scatter(
+                centroids[:, 0], centroids[:, 1], c="black", s=200, marker="X", label="Centroids"
+            )
             plt.xlabel(x_col)
             plt.ylabel(y_col)
             plt.title("KMeans Clustering Result")

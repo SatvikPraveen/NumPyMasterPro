@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+
 def describe_array(arr: np.ndarray, verbose: bool = True) -> dict:
     """
     Print and return key metadata about a NumPy array.
@@ -23,7 +24,7 @@ def describe_array(arr: np.ndarray, verbose: bool = True) -> dict:
         "ndim": arr.ndim,
         "dtype": arr.dtype,
         "itemsize": arr.itemsize,
-        "nbytes": arr.nbytes
+        "nbytes": arr.nbytes,
     }
     if verbose:
         print("🔍 Array Summary:")
@@ -49,12 +50,12 @@ def array_flags(arr: np.ndarray, verbose: bool = True) -> dict:
         Dictionary of memory layout flags.
     """
     # .flags is a numpy.flagsobj object, which can be converted to string and parsed
-    flag_lines = str(arr.flags).strip().split('\n')
+    flag_lines = str(arr.flags).strip().split("\n")
     flags = {}
     for line in flag_lines:
-        if ':' in line:
-            key, val = line.strip().split(':')
-            flags[key.strip()] = val.strip() == 'True'
+        if ":" in line:
+            key, val = line.strip().split(":")
+            flags[key.strip()] = val.strip() == "True"
 
     if verbose:
         print("🧠 Memory Flags:")
@@ -99,7 +100,7 @@ def compare_arrays(arr1: np.ndarray, arr2: np.ndarray) -> dict:
     return {
         "shape_equal": arr1.shape == arr2.shape,
         "dtype_equal": arr1.dtype == arr2.dtype,
-        "elementwise_equal": np.array_equal(arr1, arr2)
+        "elementwise_equal": np.array_equal(arr1, arr2),
     }
 
 
@@ -136,14 +137,16 @@ def array_summary_table(*arrays: np.ndarray, names=None) -> pd.DataFrame:
     """
     rows = []
     for i, arr in enumerate(arrays):
-        name = names[i] if names else f"Array {i+1}"
-        rows.append({
-            "Name": name,
-            "Shape": arr.shape,
-            "Size": arr.size,
-            "Dtype": arr.dtype,
-            "Nbytes": arr.nbytes
-        })
+        name = names[i] if names else f"Array {i + 1}"
+        rows.append(
+            {
+                "Name": name,
+                "Shape": arr.shape,
+                "Size": arr.size,
+                "Dtype": arr.dtype,
+                "Nbytes": arr.nbytes,
+            }
+        )
     return pd.DataFrame(rows)
 
 
