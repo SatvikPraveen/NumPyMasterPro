@@ -1,18 +1,33 @@
 """
 NumPyMasterPro Utility Scripts
 
-This package provides modular utility functions for NumPy operations,
-organized by topic for easy reuse across notebooks and projects.
+Modular NumPy utilities organised by topic, reusable across the notebooks,
+the Streamlit app, and your own projects.
 
-Quick imports:
---------------
-from scripts import kmeans, describe_array, minmax_normalize
-from scripts.math_utils import power_array, sqrt_array
-from scripts.linear_algebra_utils import compute_inverse, eigen_decomposition
+Quick imports
+-------------
+>>> from scripts import KMeans, generate_data, zscore_normalize
+>>> from scripts.linear_algebra_utils import pca, ridge_regression
+>>> from scripts.stats_utils import RunningStats, bootstrap_ci
+>>> from scripts.perf_utils import timeit_compare, rolling_windows
+
+Each submodule is also importable on its own (the notebooks add ``scripts/``
+to ``sys.path`` and use ``from kmeans_utils import ...``).
 """
 
-# Array Utilities
-# Aggregation Utilities
+from __future__ import annotations
+
+from . import (
+    aggregation_utils,
+    array_utils,
+    io_utils,
+    kmeans_utils,
+    linear_algebra_utils,
+    logical_utils,
+    math_utils,
+    perf_utils,
+    stats_utils,
+)
 from .aggregation_utils import (
     array_max,
     array_mean,
@@ -20,20 +35,29 @@ from .aggregation_utils import (
     array_std,
     array_sum,
     array_var,
+    axis_max,
     axis_mean,
+    axis_min,
+    axis_std,
     axis_sum,
+    axis_var,
 )
 from .array_utils import (
     array_flags,
     array_summary_table,
+    broadcast_result_shape,
     compare_arrays,
     create_identity_matrix,
     describe_array,
+    explain_broadcast,
+    flatten_or_ravel,
+    generate_range,
+    human_bytes,
+    is_view_of,
 )
-
-# I/O Utilities
 from .io_utils import (
     create_memmap,
+    load_genfromtxt,
     load_memmap,
     load_npy,
     load_npz,
@@ -42,33 +66,48 @@ from .io_utils import (
     save_npz,
     save_txt,
 )
-
-# K-Means Utilities
 from .kmeans_utils import (
+    KMeans,
+    KMeansResult,
     assign_clusters,
     compute_cluster_inertia,
     compute_inertia,
+    elbow_point,
     generate_data,
     initialize_centroids,
     kmeans,
+    pairwise_sq_distances,
+    run_kmeans,
+    silhouette_score,
     update_centroids,
 )
-
-# Linear Algebra Utilities
 from .linear_algebra_utils import (
+    PCAResult,
+    back_substitution,
+    cholesky_solve,
     closed_form_linear_regression,
     compute_determinant,
     compute_inverse,
+    compute_rank,
     compute_svd,
+    condition_number,
     dot_product,
     eigen_decomposition,
+    forward_substitution,
+    gram_schmidt,
+    is_positive_definite,
+    is_symmetric,
     l1_norm,
     l2_norm,
+    least_squares,
     matmul_product,
+    pca,
+    power_iteration,
+    pseudo_inverse,
+    qr_solve,
+    ridge_regression,
     solve_system,
 )
-
-# Logical Utilities
 from .logical_utils import (
     all_condition,
     any_condition,
@@ -79,16 +118,17 @@ from .logical_utils import (
     classify_scores,
     compound_condition,
     count_matching,
+    filter_valid_positive,
     find_indices,
     mask_by_value,
     where_condition,
 )
-
-# Math Utilities
 from .math_utils import (
     add_arrays,
     clip_array,
     cos_array,
+    cumulative_product,
+    cumulative_sum,
     exp_array,
     multiply_arrays,
     natural_log,
@@ -97,42 +137,75 @@ from .math_utils import (
     sin_array,
     sqrt_array,
 )
-
-# Statistics Utilities
+from .perf_utils import (
+    Timer,
+    TimingResult,
+    chunked_apply,
+    iter_chunks,
+    memory_footprint,
+    rolling_windows,
+    strided_blocks,
+    timeit_compare,
+)
 from .stats_utils import (
+    RunningStats,
+    bootstrap_ci,
     compute_correlation,
+    covariance_matrix,
+    ecdf,
+    entropy,
     generate_normal_distribution,
     generate_random_integers,
     histogram_binning,
     minmax_normalize,
+    moving_average,
+    pearson_r,
+    robust_scale,
+    standardize_rows,
     summarize_array,
+    weighted_mean,
+    weighted_std,
     zscore_normalize,
 )
 
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 
 __all__ = [
-    # Math
+    "KMeans",
+    "KMeansResult",
+    "PCAResult",
+    "RunningStats",
+    "Timer",
+    "TimingResult",
     "add_arrays",
+    "aggregation_utils",
     "all_condition",
-    # Logical
     "any_condition",
     "array_flags",
     "array_max",
     "array_mean",
     "array_min",
     "array_std",
-    # Aggregation
     "array_sum",
     "array_summary_table",
+    "array_utils",
     "array_var",
     "assign_clusters",
+    "axis_max",
     "axis_mean",
+    "axis_min",
+    "axis_std",
     "axis_sum",
+    "axis_var",
+    "back_substitution",
+    "bootstrap_ci",
+    "broadcast_result_shape",
     "check_finite",
     "check_inf",
     "check_isin",
     "check_nan",
+    "cholesky_solve",
+    "chunked_apply",
     "classify_scores",
     "clip_array",
     "closed_form_linear_regression",
@@ -143,48 +216,89 @@ __all__ = [
     "compute_determinant",
     "compute_inertia",
     "compute_inverse",
+    "compute_rank",
     "compute_svd",
+    "condition_number",
     "cos_array",
     "count_matching",
+    "covariance_matrix",
     "create_identity_matrix",
     "create_memmap",
-    # Array utilities
+    "cumulative_product",
+    "cumulative_sum",
     "describe_array",
-    # Linear algebra
     "dot_product",
+    "ecdf",
     "eigen_decomposition",
+    "elbow_point",
+    "entropy",
     "exp_array",
+    "explain_broadcast",
+    "filter_valid_positive",
     "find_indices",
+    "flatten_or_ravel",
+    "forward_substitution",
     "generate_data",
     "generate_normal_distribution",
     "generate_random_integers",
+    "generate_range",
+    "gram_schmidt",
     "histogram_binning",
+    "human_bytes",
     "initialize_centroids",
-    # K-Means
+    "io_utils",
+    "is_positive_definite",
+    "is_symmetric",
+    "is_view_of",
+    "iter_chunks",
     "kmeans",
+    "kmeans_utils",
     "l1_norm",
     "l2_norm",
+    "least_squares",
+    "linear_algebra_utils",
+    "load_genfromtxt",
     "load_memmap",
     "load_npy",
     "load_npz",
     "load_txt",
+    "logical_utils",
     "mask_by_value",
+    "math_utils",
     "matmul_product",
+    "memory_footprint",
     "minmax_normalize",
+    "moving_average",
     "multiply_arrays",
     "natural_log",
+    "pairwise_sq_distances",
+    "pca",
+    "pearson_r",
+    "perf_utils",
     "power_array",
+    "power_iteration",
+    "pseudo_inverse",
+    "qr_solve",
+    "ridge_regression",
+    "robust_scale",
+    "rolling_windows",
     "round_array",
-    # I/O
+    "run_kmeans",
     "save_npy",
     "save_npz",
     "save_txt",
+    "silhouette_score",
     "sin_array",
     "solve_system",
     "sqrt_array",
-    # Statistics
+    "standardize_rows",
+    "stats_utils",
+    "strided_blocks",
     "summarize_array",
+    "timeit_compare",
     "update_centroids",
+    "weighted_mean",
+    "weighted_std",
     "where_condition",
     "zscore_normalize",
 ]

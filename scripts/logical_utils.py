@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import operator as operator_module
 from typing import Any
 
 import numpy as np
@@ -14,7 +17,7 @@ def classify_scores(arr: np.ndarray) -> np.ndarray:
 
 
 def any_condition(
-    arr: np.ndarray, condition: np.ndarray = None, axis: int | None = None
+    arr: np.ndarray, condition: np.ndarray | None = None, axis: int | None = None
 ) -> bool | np.ndarray:
     """
     Test whether any array element along a given axis evaluates to True.
@@ -39,13 +42,12 @@ def any_condition(
     >>> any_condition(arr, arr > 3)
     True
     """
-    if condition is not None:
-        return np.any(condition, axis=axis)
-    return np.any(arr, axis=axis)
+    result = np.any(condition if condition is not None else arr, axis=axis)
+    return bool(result) if np.ndim(result) == 0 else np.asarray(result)
 
 
 def all_condition(
-    arr: np.ndarray, condition: np.ndarray = None, axis: int | None = None
+    arr: np.ndarray, condition: np.ndarray | None = None, axis: int | None = None
 ) -> bool | np.ndarray:
     """
     Test whether all array elements along a given axis evaluate to True.
@@ -70,9 +72,8 @@ def all_condition(
     >>> all_condition(arr, arr > 0)
     True
     """
-    if condition is not None:
-        return np.all(condition, axis=axis)
-    return np.all(arr, axis=axis)
+    result = np.all(condition if condition is not None else arr, axis=axis)
+    return bool(result) if np.ndim(result) == 0 else np.asarray(result)
 
 
 def where_condition(condition: np.ndarray, x: Any = None, y: Any = None) -> tuple | np.ndarray:
@@ -130,18 +131,18 @@ def mask_by_value(arr: np.ndarray, value: Any, operator: str = "==") -> np.ndarr
     array([False, False, False,  True,  True])
     """
     operators = {
-        "==": arr == value,
-        "!=": arr != value,
-        ">": arr > value,
-        "<": arr < value,
-        ">=": arr >= value,
-        "<=": arr <= value,
+        "==": operator_module.eq,
+        "!=": operator_module.ne,
+        ">": operator_module.gt,
+        "<": operator_module.lt,
+        ">=": operator_module.ge,
+        "<=": operator_module.le,
     }
 
     if operator not in operators:
         raise ValueError(f"Invalid operator '{operator}'. Must be one of: {list(operators.keys())}")
 
-    return operators[operator]
+    return operators[operator](arr, value)
 
 
 def count_matching(arr: np.ndarray, condition: np.ndarray) -> int:
@@ -166,10 +167,10 @@ def count_matching(arr: np.ndarray, condition: np.ndarray) -> int:
     >>> count_matching(arr, arr > 3)
     2
     """
-    return np.count_nonzero(condition)
+    return int(np.count_nonzero(condition))
 
 
-def find_indices(arr: np.ndarray, condition: np.ndarray = None) -> tuple:
+def find_indices(arr: np.ndarray, condition: np.ndarray | None = None) -> tuple:
     """
     Find indices of nonzero elements or elements matching a condition.
 

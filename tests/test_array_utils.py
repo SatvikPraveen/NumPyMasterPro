@@ -7,11 +7,16 @@ import pytest
 
 from scripts.array_utils import (
     array_flags,
+    array_summary_table,
+    broadcast_result_shape,
     compare_arrays,
     create_identity_matrix,
     describe_array,
+    explain_broadcast,
     flatten_or_ravel,
     generate_range,
+    human_bytes,
+    is_view_of,
 )
 
 
@@ -42,6 +47,17 @@ class TestDescribeArray:
         assert result["itemsize"] == 4  # int32 is 4 bytes
         assert result["nbytes"] == 12  # 3 elements * 4 bytes
 
+    def test_view_detection_and_strides(self):
+        base = np.arange(10)
+        info = describe_array(base, verbose=False)
+        assert info["is_view"] is False
+        assert info["strides"] == (base.itemsize,)
+        assert describe_array(base[2:5], verbose=False)["is_view"] is True
+
+    def test_verbose_prints(self, capsys):
+        describe_array(np.arange(3), verbose=True)
+        assert "Array Summary" in capsys.readouterr().out
+
 
 class TestArrayFlags:
     """Tests for array_flags function"""
@@ -63,6 +79,14 @@ class TestArrayFlags:
         flags = array_flags(arr, verbose=False)
 
         assert flags["WRITEABLE"] is True
+
+    def test_readonly_and_owndata(self):
+        arr = np.arange(4)
+        arr.setflags(write=False)
+        flags = array_flags(arr, verbose=False)
+        assert flags["WRITEABLE"] is False
+        assert flags["OWNDATA"] is True
+        assert array_flags(arr[1:], verbose=False)["OWNDATA"] is False
 
 
 class TestFlattenOrRavel:
@@ -115,6 +139,64 @@ class TestCompareArrays:
         assert result["shape_equal"] is True
         assert result["elementwise_equal"] is False
 
+    def test_allclose_and_shared_memory(self):
+        a = np.array([1.0, 2.0, 3.0])
+        b = a + 1e-12
+        result = compare_arrays(a, b)
+        assert result["elementwise_equal"] is False
+        assert result["allclose"] is True
+        assert result["shares_memory"] is False
+        assert compare_arrays(a, a[:])["shares_memory"] is True
+        assert compare_arrays(a, np.array([1, 2]))["allclose"] is False
+
+
+class TestViewsAndMemory:
+    def test_is_view_of(self):
+        base = np.arange(10)
+        assert is_view_of(base[::2], base)
+        assert not is_view_of(base.copy(), base)
+
+    def test_human_bytes(self):
+        assert human_bytes(512) == "512 B"
+        assert human_bytes(1536) == "1.50 KiB"
+        assert human_bytes(3 * 1024**2) == "3.00 MiB"
+        assert human_bytes(2 * 1024**4) == "2.00 TiB"
+
+
+class TestSummaryTable:
+    def test_table_shape_and_names(self):
+        df = array_summary_table(np.zeros(3), np.ones((2, 2)), names=["z", "o"])
+        assert list(df["Name"]) == ["z", "o"]
+        assert list(df["Size"]) == [3, 4]
+        assert "Memory" in df.columns
+
+    def test_default_names_and_validation(self):
+        df = array_summary_table(np.zeros(1))
+        assert df.loc[0, "Name"] == "Array 1"
+        with pytest.raises(ValueError):
+            array_summary_table(np.zeros(1), names=["a", "b"])
+
+
+class TestBroadcasting:
+    @pytest.mark.parametrize(
+        "shapes",
+        [((3, 1), (1, 4)), ((5,), (2, 5)), ((2, 3, 4), (4,)), ((1,), (1,)), ((), (3,))],
+    )
+    def test_matches_numpy(self, shapes):
+        assert broadcast_result_shape(*shapes) == np.broadcast_shapes(*shapes)
+
+    def test_incompatible(self):
+        with pytest.raises(ValueError):
+            broadcast_result_shape((3,), (4,))
+
+    def test_explain_success_and_failure(self):
+        text = explain_broadcast((3, 1), (4,))
+        assert "result: (3, 4)" in text
+        assert "stretch" in text
+        bad = explain_broadcast((3,), (4,))
+        assert "MISMATCH" in bad
+        assert "incompatible" in bad
+
 
 class TestCreateIdentityMatrix:
     """Tests for create_identity_matrix function"""
@@ -132,6 +214,10 @@ class TestCreateIdentityMatrix:
         assert np.allclose(np.sum(result), 5.0)  # Sum of diagonal
         assert np.allclose(result[0, 0], 1.0)
         assert np.allclose(result[0, 1], 0.0)
+
+    def test_negative_size(self):
+        with pytest.raises(ValueError):
+            create_identity_matrix(-1)
 
 
 class TestGenerateRange:
@@ -155,6 +241,10 @@ class TestGenerateRange:
         assert len(result) == 10
         assert np.allclose(result[0], 0.0)
         assert np.allclose(result[-1], 0.9)
+
+    def test_zero_step(self):
+        with pytest.raises(ValueError):
+            generate_range(0, 5, 0)
 
 
 if __name__ == "__main__":

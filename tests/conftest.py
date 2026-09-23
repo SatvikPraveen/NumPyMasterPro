@@ -20,9 +20,8 @@ def sample_2d_array():
 
 @pytest.fixture
 def random_array():
-    """Fixture providing a random array with fixed seed"""
-    np.random.seed(42)
-    return np.random.rand(10, 5)
+    """Fixture providing a random array from a fixed-seed Generator"""
+    return np.random.default_rng(42).random((10, 5))
 
 
 @pytest.fixture
@@ -39,12 +38,10 @@ def array_with_infs():
 
 @pytest.fixture
 def clustering_data():
-    """Fixture providing simple clustering data"""
-    np.random.seed(42)
-    cluster1 = [*np.random.randn(30, 2), 0, 0]
-    cluster2 = [*np.random.randn(30, 2), 5, 5]
-    cluster3 = [*np.random.randn(30, 2), 5, 0]
-    return np.vstack([cluster1, cluster2, cluster3])
+    """Fixture providing three well-separated 2-D Gaussian blobs (90 x 2)"""
+    rng = np.random.default_rng(42)
+    centers = np.array([[0.0, 0.0], [5.0, 5.0], [5.0, 0.0]])
+    return np.vstack([rng.normal(loc=c, size=(30, 2)) for c in centers])
 
 
 def pytest_configure(config):
