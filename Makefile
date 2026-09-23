@@ -1,69 +1,102 @@
-.PHONY: help install install-dev test test-verbose test-coverage lint format clean docker-build docker-run notebooks
+.DEFAULT_GOAL := help
+.PHONY: help venv install install-dev test test-fast test-coverage test-props lint format typecheck check \
+        precommit clean docker-build docker-run docker-app docker-down notebooks streamlit notebooks-exec all
+
+PYTHON ?= python3
+VENV   ?= .venv
+BIN    := $(VENV)/bin
 
 help:  ## Show this help message
 	@echo "NumPyMasterPro - Available Commands:"
 	@echo ""
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
 
-install:  ## Install production dependencies
-	pip install -r requirements.txt
+# ---------------------------------------------------------------------------
+# Environment
+# ---------------------------------------------------------------------------
+venv:  ## Create a virtual environment in .venv (uses uv when available)
+	@if command -v uv >/dev/null 2>&1; then uv venv $(VENV); else $(PYTHON) -m venv $(VENV); fi
+	@echo "Activate with: source $(BIN)/activate"
 
-install-dev:  ## Install development dependencies (includes testing tools)
-	pip install -r requirements.txt
-	pip install -r requirements_dev.txt
+install:  ## Install runtime dependencies (editable package)
+	$(BIN)/pip install -e .
 
-test:  ## Run all tests
-	pytest tests/ -v
+install-dev:  ## Install package with dev, app and notebook extras
+	@if command -v uv >/dev/null 2>&1; then uv pip install --python $(BIN)/python -e ".[dev,app,notebooks]"; \
+	 else $(BIN)/pip install -e ".[dev,app,notebooks]"; fi
 
-test-verbose:  ## Run tests with verbose output
-	pytest tests/ -vv -s
+setup: venv install-dev  ## Complete setup (venv + all extras)
 
-test-coverage:  ## Run tests with coverage report
-	pytest tests/ -v --cov=scripts --cov-report=term-missing --cov-report=html
+# ---------------------------------------------------------------------------
+# Quality
+# ---------------------------------------------------------------------------
+test:  ## Run the full test suite with coverage
+	$(BIN)/pytest
 
-test-specific:  ## Run specific test file (use TEST=test_file_name)
-	pytest tests/test_$(TEST).py -v
+test-fast:  ## Run tests in parallel without coverage
+	$(BIN)/pytest -n auto --no-cov -q
 
-lint:  ## Run linting checks (flake8)
-	flake8 scripts/ tests/ --max-line-length=127 --extend-ignore=E203,W503
+test-coverage:  ## Run tests and write an HTML coverage report to htmlcov/
+	$(BIN)/pytest --cov-report=html --cov-report=term-missing
+	@echo "open htmlcov/index.html"
 
-format:  ## Format code with black and isort
-	black scripts/ tests/
-	isort scripts/ tests/
+test-props:  ## Run only the hypothesis property-based tests
+	$(BIN)/pytest tests/test_properties.py --no-cov -q
 
-format-check:  ## Check code formatting without changes
-	black --check scripts/ tests/
-	isort --check-only scripts/ tests/
+lint:  ## Lint with ruff
+	$(BIN)/ruff check scripts tests kmeans_app.py
 
-clean:  ## Clean up generated files
-	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
-	find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
-	find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true
-	find . -type f -name "*.pyc" -delete
-	find . -type f -name "*.pyo" -delete
-	find . -type f -name ".coverage" -delete
-	rm -rf htmlcov/ coverage.xml .mypy_cache/
+format:  ## Auto-fix lint issues and format with ruff
+	$(BIN)/ruff check scripts tests kmeans_app.py --fix
+	$(BIN)/ruff format scripts tests kmeans_app.py
 
-docker-build:  ## Build Docker image
-	docker-compose build
+format-check:  ## Verify formatting without changing files
+	$(BIN)/ruff format --check scripts tests kmeans_app.py
 
-docker-run:  ## Run Docker container with Jupyter
-	docker-compose up
+typecheck:  ## Static type-check scripts/ with mypy
+	$(BIN)/mypy
 
-docker-down:  ## Stop Docker containers
-	docker-compose down
+check: lint format-check typecheck test  ## Everything CI runs, locally
 
+precommit:  ## Install git pre-commit hooks
+	$(BIN)/pre-commit install
+
+# ---------------------------------------------------------------------------
+# Notebooks & app
+# ---------------------------------------------------------------------------
 notebooks:  ## Start Jupyter Lab locally
-	jupyter lab
+	$(BIN)/jupyter lab
 
-streamlit:  ## Run Streamlit K-Means app
-	streamlit run kmeans_app.py
+notebooks-exec:  ## Execute every notebook headlessly (what CI does)
+	@set -e; for nb in notebooks/*.ipynb; do \
+	  echo "→ $$nb"; \
+	  $(BIN)/jupyter nbconvert --to notebook --execute "$$nb" --ExecutePreprocessor.timeout=300 --output "/tmp/$$(basename $$nb)"; \
+	done
 
-venv:  ## Create virtual environment
-	python3 -m venv venv
-	@echo "Virtual environment created. Activate with: source venv/bin/activate"
+streamlit:  ## Run the Streamlit K-Means explorer
+	$(BIN)/streamlit run kmeans_app.py
 
-setup: venv install  ## Complete setup (venv + dependencies)
-	@echo "Setup complete! Activate venv: source venv/bin/activate"
+# ---------------------------------------------------------------------------
+# Docker
+# ---------------------------------------------------------------------------
+docker-build:  ## Build the Docker image
+	docker compose build
 
-all: clean install-dev test lint  ## Run all checks (clean, install, test, lint)
+docker-run:  ## Run Jupyter Lab in Docker (http://localhost:8889)
+	docker compose up
+
+docker-app:  ## Run the Streamlit app in Docker (http://localhost:8501)
+	docker compose --profile app up app
+
+docker-down:  ## Stop and remove containers
+	docker compose --profile app down --remove-orphans
+
+# ---------------------------------------------------------------------------
+# Housekeeping
+# ---------------------------------------------------------------------------
+clean:  ## Remove caches, coverage and build artefacts
+	find . -type d \( -name "__pycache__" -o -name ".pytest_cache" -o -name ".ruff_cache" -o -name ".mypy_cache" -o -name ".hypothesis" -o -name "*.egg-info" \) -prune -exec rm -rf {} + 2>/dev/null || true
+	find . -type f \( -name "*.pyc" -o -name "*.pyo" -o -name ".coverage" \) -delete
+	rm -rf htmlcov/ coverage.xml build/ dist/
+
+all: clean install-dev check  ## Clean, install, and run all checks

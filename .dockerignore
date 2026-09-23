@@ -1,13 +1,27 @@
-# Ignore only the virtual environment
+# Virtual environments and caches
+.venv/
+venv/
 numpy-env/
-
-# Ignore typical temporary files
+numpy_env/
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.db
-*.sqlite3
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.hypothesis/
+htmlcov/
+.coverage
+coverage.xml
+
+# VCS, IDE, OS
+.git/
+.github/
+.vscode/
+.idea/
 .DS_Store
+
+# Secrets
 .env
-.venv
+
+# Notebook checkpoints
+.ipynb_checkpoints/

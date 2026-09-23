@@ -1,18 +1,31 @@
-version: "3.8"
-
 services:
-  numpy-masterpro:
+  lab:
     build:
       context: .
-      dockerfile: Dockerfile
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION:-3.12}
+    image: numpymasterpro:latest
+    container_name: ${DOCKER_CONTAINER_NAME:-numpymasterpro}
     ports:
-      - "8889:8888" # Local:Container — change host port if 8889 is in use
+      - "${DOCKER_HOST_PORT:-8889}:8888" # host:container — change host port if 8889 is busy
+    environment:
+      JUPYTER_TOKEN: ${JUPYTER_TOKEN:-}
+      JUPYTER_PASSWORD: ${JUPYTER_PASSWORD:-}
     volumes:
       - .:/home/jovyan/work
-    container_name: numpymasterpro
-    command: >
-      start-notebook.sh
-      --NotebookApp.token=''
-      --NotebookApp.password=''
-      --NotebookApp.allow_origin='*'
-      --NotebookApp.notebook_dir='/home/jovyan/work'
+    env_file:
+      - path: .env
+        required: false
+
+  # Interactive K-Means explorer: `docker compose --profile app up app`
+  app:
+    profiles: ["app"]
+    image: numpymasterpro:latest
+    build:
+      context: .
+    container_name: numpymasterpro-app
+    command: streamlit run kmeans_app.py --server.address=0.0.0.0 --server.port=8501 --server.headless=true
+    ports:
+      - "${STREAMLIT_PORT:-8501}:8501"
+    volumes:
+      - .:/home/jovyan/work
