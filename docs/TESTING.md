@@ -1,298 +1,166 @@
-# 🧪 Testing Guide - NumPyMasterPro
+# 🧪 Testing Guide — NumPyMasterPro
 
-This document describes the testing infrastructure and best practices for NumPyMasterPro.
+This document describes the test suite, the quality gates that run locally and
+in CI, and how to add tests for new code.
 
 ---
 
 ## 📋 Overview
 
-NumPyMasterPro includes a comprehensive test suite covering all utility modules with **unit tests**, **integration tests**, and **CI/CD automation**.
+The suite has three layers:
 
-### Test Coverage
+| Layer | Files | What it checks |
+| --- | --- | --- |
+| **Unit tests** | `tests/test_*_utils.py` | Every public function on hand-picked inputs, edge cases and error paths, cross-checked against `numpy.linalg` / closed-form results where possible |
+| **Property-based tests** | `tests/test_properties.py` | Invariants on generated inputs via [hypothesis](https://hypothesis.readthedocs.io/): e.g. inertia never increases across Lloyd iterations, `RunningStats` equals a single NumPy pass for any chunking, PCA round-trips |
+| **Headless app tests** | `tests/test_app.py` | The Streamlit explorer via `streamlit.testing.v1.AppTest`; skipped when the optional `app` extra is not installed |
 
-- ✅ **Array Utilities** - `test_array_utils.py`
-- ✅ **Logical Utilities** - `test_logical_utils.py`
-- ✅ **K-Means Utilities** - `test_kmeans_utils.py`
-- ✅ **Math Utilities** - `test_math_utils.py`
-- 🔄 Additional modules can be tested similarly
+Coverage is measured with branch coverage and sits around **96%** of `scripts/`.
 
 ---
 
-## 🚀 Quick Start
-
-### Prerequisites
-
-Install development dependencies:
+## 🚀 Quick start
 
 ```bash
-pip install -r requirements_dev.txt
+uv pip install -e ".[dev,app]"     # or: pip install -e ".[dev,app]"
+
+pytest                             # full suite with coverage (configured in pyproject.toml)
+pytest -n auto --no-cov -q         # fast parallel run
+pytest tests/test_properties.py    # only the property-based tests
+pytest -k "silhouette" -v          # tests matching a keyword
+pytest -m "not integration"        # skip the app tests
 ```
 
-Or use the Makefile:
+Or via the Makefile:
 
 ```bash
-make install-dev
-```
-
-### Running Tests
-
-**Run all tests:**
-```bash
-pytest
-```
-
-**Run tests with coverage:**
-```bash
-pytest --cov=scripts --cov-report=term-missing
-```
-
-**Run specific test file:**
-```bash
-pytest tests/test_logical_utils.py -v
-```
-
-**Run tests matching a pattern:**
-```bash
-pytest -k "test_any_condition" -v
+make test            # pytest with coverage
+make test-fast       # parallel, no coverage
+make test-coverage   # HTML report in htmlcov/
+make test-props      # hypothesis tests only
+make check           # ruff + format check + mypy + tests (what CI runs)
 ```
 
 ---
 
-## 📊 Using Makefile Commands
+## ⚙️ Configuration
 
-We provide convenient Makefile commands for common tasks:
+All test configuration lives in `pyproject.toml`:
 
-```bash
-make test              # Run all tests
-make test-coverage     # Run tests with HTML coverage report
-make test-verbose      # Run tests with detailed output
-make lint              # Check code quality
-make format            # Auto-format code with black & isort
-make clean             # Remove cache and build artifacts
-make all               # Run complete check (clean, install, test, lint)
+```toml
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --tb=short --cov=scripts --cov-report=term-missing"
+filterwarnings = ["error::DeprecationWarning:scripts"]   # our own deprecations are errors
+markers = ["slow", "integration", "unit"]
+
+[tool.coverage.run]
+source = ["scripts"]
+branch = true
 ```
+
+`--strict-markers` means an unknown `@pytest.mark.<name>` is an error; register
+new markers in the `markers` list.
 
 ---
 
-## 🎯 Test Structure
+## 🧩 Shared fixtures (`tests/conftest.py`)
 
-### Directory Layout
+- `sample_1d_array`, `sample_2d_array` — small deterministic arrays
+- `random_array` — `(10, 5)` uniform values from `default_rng(42)`
+- `array_with_nans`, `array_with_infs` — for NaN/inf handling paths
+- `clustering_data` — three well-separated Gaussian blobs, `(90, 2)`
 
-```
-tests/
-├── __init__.py              # Test package initialization
-├── conftest.py              # Shared fixtures and configuration
-├── test_array_utils.py      # Tests for array utilities
-├── test_logical_utils.py    # Tests for logical operations
-├── test_kmeans_utils.py     # Tests for K-Means algorithm
-└── test_math_utils.py       # Tests for math operations
-```
+Fixtures use `numpy.random.Generator`; never call `np.random.seed` in tests
+(ruff rule `NPY002` will flag it).
 
-### Test Organization
+---
 
-Each test file follows this structure:
+## 🔬 Property-based tests
+
+`tests/test_properties.py` uses `hypothesis.extra.numpy` strategies to generate
+arrays and shapes. Each test is decorated with a shared `settings` object
+(`max_examples=60`, no deadline). When hypothesis finds a failing input it
+prints a minimal *falsifying example*; two real bugs (an `entropy` underflow and
+a z-score edge case) were found this way and are pinned in the changelog.
+
+Guidelines:
+
+- Bound floats (`min_value`/`max_value`, no NaN/inf) unless NaN handling is the
+  point of the test.
+- Compare with tolerances scaled to the data magnitude.
+- Keep example counts modest; property tests run on every CI matrix leg.
+
+---
+
+## 🎛️ App tests
+
+`tests/test_app.py` runs `kmeans_app.py` headlessly:
 
 ```python
-class TestFeatureName:
-    """Group related tests together"""
-    
-    def test_basic_case(self):
-        """Test description"""
-        # Arrange
-        arr = np.array([1, 2, 3])
-        
-        # Act
-        result = function_under_test(arr)
-        
-        # Assert
-        assert result == expected_value
+from streamlit.testing.v1 import AppTest
+at = AppTest.from_file("kmeans_app.py").run()
+assert not at.exception
 ```
+
+It checks that the page renders without exceptions, that the metrics and
+download button exist, and that changing `k` re-runs cleanly. The module calls
+`pytest.importorskip("streamlit")`, so the tests vanish rather than fail when
+Streamlit is absent.
 
 ---
 
-## 🧩 Shared Fixtures
-
-Common test fixtures are defined in `conftest.py`:
-
-- `sample_1d_array` - Simple 1D array
-- `sample_2d_array` - Simple 2D array  
-- `random_array` - Random array with fixed seed
-- `array_with_nans` - Array containing NaN values
-- `array_with_infs` - Array with infinite values
-- `clustering_data` - Synthetic clustering dataset
-
-**Usage:**
-```python
-def test_with_fixture(sample_1d_array):
-    result = some_function(sample_1d_array)
-    assert result.shape == (5,)
-```
-
----
-
-## 📈 Coverage Reports
-
-### Terminal Coverage
-
-```bash
-pytest --cov=scripts --cov-report=term-missing
-```
-
-### HTML Coverage Report
-
-```bash
-pytest --cov=scripts --cov-report=html
-open htmlcov/index.html  # View in browser
-```
-
-### XML Coverage (for CI/CD)
-
-```bash
-pytest --cov=scripts --cov-report=xml
-```
-
----
-
-## 🏷️ Test Markers
-
-Use markers to categorize tests:
+## 🏷️ Markers
 
 ```python
-@pytest.mark.slow
-def test_large_dataset():
-    """Test with large dataset (takes time)"""
-    pass
-
-@pytest.mark.unit
-def test_single_function():
-    """Unit test for isolated function"""
-    pass
-
-@pytest.mark.integration
-def test_workflow():
-    """Integration test across modules"""
-    pass
-```
-
-**Run tests by marker:**
-```bash
-pytest -m "not slow"      # Skip slow tests
-pytest -m "unit"          # Run only unit tests
-pytest -m "integration"   # Run only integration tests
+@pytest.mark.slow          # long-running; deselect with -m "not slow"
+@pytest.mark.integration   # crosses module boundaries or drives the app
+@pytest.mark.unit          # isolated function behaviour
 ```
 
 ---
 
-## 🔧 Configuration
+## 🤖 Continuous integration
 
-Test configuration is defined in `pytest.ini`:
+`.github/workflows/ci.yml` runs on pushes and PRs to `main`/`develop`:
 
-```ini
-[pytest]
-testpaths = tests
-addopts = -v --strict-markers --cov=scripts
+1. **lint** — `ruff check`, `ruff format --check`, `mypy` (gates everything else)
+2. **test** — Python 3.10/3.11/3.12/3.13 on Ubuntu; 3.12/3.13 on macOS and Windows; coverage uploaded from one leg
+3. **notebooks** — every notebook executed with `nbconvert`; a failing cell fails the job
+4. **security** — `bandit -ll` (blocking) and `pip-audit` (advisory)
+5. **docker** — image build with layer cache, then an in-container smoke test of the package
+6. **build-status** — fails unless all of the above succeeded
+
+Nothing is masked with `|| echo`; a red job means something is actually broken.
+
+---
+
+## ✍️ Writing new tests
+
+1. Put unit tests in `tests/test_<module>.py`, grouped in `Test<Feature>` classes.
+2. Test the happy path, at least one edge case (empty, constant, NaN), and the
+   error path with `pytest.raises(ValueError, match=...)`.
+3. Where a NumPy reference exists (`np.linalg.solve`, `np.cov`, `np.convolve`),
+   assert against it with `np.testing.assert_allclose`.
+4. If the function has an invariant that holds for *all* inputs, add a
+   hypothesis test to `tests/test_properties.py`.
+5. Run `make check` before pushing.
+
+---
+
+## 🐛 Debugging
+
+```bash
+pytest -x --lf              # stop at first failure, rerun last failures
+pytest -vv -s               # verbose, show prints
+pytest --pdb                # drop into the debugger on failure
+pytest -o faulthandler_timeout=30   # dump stacks if a test hangs
 ```
 
 ---
 
-## 🤖 Continuous Integration
+## 📚 References
 
-Tests run automatically via GitHub Actions on:
-- ✅ Push to `main` or `develop` branches
-- ✅ Pull requests
-- ✅ Manual workflow dispatch
-
-### CI Workflow Includes:
-
-1. **Multi-platform testing** (Ubuntu, macOS, Windows)
-2. **Python version matrix** (3.10, 3.11, 3.12)
-3. **Code linting** (flake8, black, isort)
-4. **Notebook validation**
-5. **Docker build verification**
-6. **Security scanning** (safety, bandit)
-7. **Coverage reporting** (Codecov)
-
----
-
-## ✍️ Writing New Tests
-
-### Step 1: Create Test File
-
-```bash
-touch tests/test_new_module.py
-```
-
-### Step 2: Import Module and Fixtures
-
-```python
-import pytest
-import numpy as np
-from scripts.new_module import function_to_test
-```
-
-### Step 3: Write Test Classes
-
-```python
-class TestNewFunction:
-    def test_basic_behavior(self):
-        result = function_to_test([1, 2, 3])
-        assert result == expected
-    
-    def test_edge_case(self):
-        with pytest.raises(ValueError):
-            function_to_test([])
-```
-
-### Step 4: Run and Verify
-
-```bash
-pytest tests/test_new_module.py -v
-```
-
----
-
-## 📝 Best Practices
-
-✅ **Test one thing per test** - Keep tests focused  
-✅ **Use descriptive names** - `test_returns_empty_array_for_missing_values`  
-✅ **Test edge cases** - Empty arrays, NaN, inf, negative values  
-✅ **Use fixtures** - Reuse common test data  
-✅ **Check both success and failure** - Use `pytest.raises()` for exceptions  
-✅ **Aim for high coverage** - Target 80%+ code coverage  
-✅ **Keep tests fast** - Mark slow tests with `@pytest.mark.slow`
-
----
-
-## 🐛 Debugging Tests
-
-### Run with verbose output:
-```bash
-pytest -vv -s
-```
-
-### Run with pdb debugger:
-```bash
-pytest --pdb
-```
-
-### Show local variables on failure:
-```bash
-pytest -l
-```
-
-### Run last failed tests only:
-```bash
-pytest --lf
-```
-
----
-
-## 📚 Additional Resources
-
-- [Pytest Documentation](https://docs.pytest.org/)
-- [NumPy Testing Guidelines](https://numpy.org/doc/stable/reference/testing.html)
-- [Coverage.py Documentation](https://coverage.readthedocs.io/)
-
----
-
-© 2025 Satvik Praveen – _NumPyMasterPro Testing Guide_
+- [pytest](https://docs.pytest.org/) · [hypothesis](https://hypothesis.readthedocs.io/) · [coverage.py](https://coverage.readthedocs.io/)
+- [NumPy testing guidelines](https://numpy.org/doc/stable/reference/testing.html)
+- [Streamlit app testing](https://docs.streamlit.io/develop/api-reference/app-testing)

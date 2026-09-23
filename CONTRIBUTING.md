@@ -11,10 +11,12 @@ Whether you're fixing a bug, adding a notebook, improving documentation, or shar
 
 NumPyMasterPro/
 ├── notebooks/                 # Jupyter Notebooks for learning NumPy
-├── scripts/                   # Modular utility scripts
+├── scripts/                   # Installable utility package (typed, tested)
+├── tests/                     # pytest unit tests, hypothesis property tests, app tests
 ├── datasets/                  # Sample data files
-├── docs/                      # Markdown cheat sheets, references
-├── requirements.txt           # Python dependencies
+├── docs/                      # Cheat sheet, testing guide, implementation notes
+├── pyproject.toml             # Metadata + ruff / mypy / pytest configuration
+├── kmeans_app.py              # Streamlit K-Means explorer
 └── README.md
 
 ````
@@ -40,30 +42,44 @@ Create a new branch for your contribution:
 git checkout -b feature/my-awesome-idea
 ```
 
-### 3. Make Your Changes
-
-* Follow clean code practices
-* Use meaningful commit messages
-* Add markdown or comments where necessary
-* Format code using `black` (optional, but appreciated)
-
-### 4. Test Locally (Recommended)
-
-Use Jupyter or scripts to ensure everything works before submitting.
+### 3. Set Up a Development Environment
 
 ```bash
-jupyter lab
+uv venv .venv && source .venv/bin/activate      # or: python -m venv .venv
+uv pip install -e ".[dev,app,notebooks]"        # or: pip install -e ".[dev,app,notebooks]"
+make precommit                                  # installs ruff / mypy git hooks
 ```
 
-### 5. Commit & Push
+### 4. Make Your Changes
+
+* Every public function in `scripts/` needs a docstring, type hints and tests.
+* Use `numpy.random.Generator` with a `seed=` argument; never `np.random.seed`.
+* Validate inputs and raise `ValueError` with a clear message instead of
+  letting NumPy emit NaN or a cryptic error.
+* Keep the notebook-facing function names and positional signatures stable.
+* Add a line to `CHANGELOG.md` under *Unreleased*.
+
+### 5. Run the Quality Gates
+
+```bash
+make check          # ruff check + ruff format --check + mypy + pytest
+make test-props     # hypothesis property tests only
+make notebooks-exec # execute notebooks headlessly (what CI does)
+```
+
+CI runs the same checks on Python 3.10–3.13 across three operating systems,
+executes every notebook, scans with bandit, and builds the Docker image.
+A pull request must be green before review.
+
+### 6. Commit & Push
 
 ```bash
 git add .
-git commit -m "Add: your meaningful commit message"
+git commit -m "feat(stats): add trimmed_mean with tests"   # conventional-commit style
 git push origin feature/my-awesome-idea
 ```
 
-### 6. Submit a Pull Request
+### 7. Submit a Pull Request
 
 * Go to your fork on GitHub
 * Click **"Compare & pull request"**
@@ -73,9 +89,11 @@ git push origin feature/my-awesome-idea
 
 ## 💡 Contribution Ideas
 
-* Add new notebooks (e.g., PCA, NumPy random tips, simulation)
+* Add new notebooks (e.g., numerical integration, NumPy random tips, simulation)
 * Add explanations to existing notebooks
-* Improve scripts in `/scripts`
+* Extend `scripts/` (ideas: LU decomposition with pivoting, DBSCAN, Gaussian
+  mixture EM, FFT-based convolution, `einsum` walkthroughs)
+* Add hypothesis property tests for existing invariants
 * Improve `docs/` cheat sheets
 * Add datasets for experimentation
 * Report or fix bugs

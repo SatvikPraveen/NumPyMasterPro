@@ -1,237 +1,200 @@
 # 🧠 NumPyMasterPro
 
+[![CI](https://github.com/SatvikPraveen/NumPyMasterPro/actions/workflows/ci.yml/badge.svg)](https://github.com/SatvikPraveen/NumPyMasterPro/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-darkgreen.svg)](https://www.python.org/)
+[![NumPy](https://img.shields.io/badge/NumPy-%E2%89%A5%201.26-013243.svg?logo=numpy)](https://numpy.org/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![mypy](https://img.shields.io/badge/mypy-checked-blue.svg)](https://mypy-lang.org/)
+[![Tests](https://img.shields.io/badge/tests-pytest%20%2B%20hypothesis-blue.svg)](https://docs.pytest.org/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-darkgreen.svg)](https://www.python.org/)
-[![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-brightgreen.svg)](https://github.com/SatvikPraveen/NumPyMasterPro/actions)
-[![Tests](https://img.shields.io/badge/Tests-Pytest-blue.svg)](https://docs.pytest.org/)
-[![Issues](https://img.shields.io/github/issues/SatvikPraveen/NumPyMasterPro?color=yellowgreen)](https://github.com/SatvikPraveen/NumPyMasterPro/issues)
-[![Jupyter Notebooks](https://img.shields.io/badge/Jupyter-Notebook-orange.svg)](https://jupyter.org/)
 [![Docker Ready](https://img.shields.io/badge/Docker-Ready-blueviolet.svg)](https://www.docker.com/)
-[![NumPy Focused](https://img.shields.io/badge/NumPy-100%25-brightgreen.svg)](https://numpy.org/)
-[![Real-World Use Cases](https://img.shields.io/badge/Use%20Cases-Included-ff69b4.svg)](#)
-[![K-Means Project](https://img.shields.io/badge/Project-K--Means%20From%20Scratch-9cf.svg)](#)
 
-**NumPyMasterPro** is a comprehensive, modular, and hands-on project designed to help you **master NumPy from first principles to real-world applications**.
+**NumPyMasterPro** is a hands-on, from-first-principles NumPy project: ten themed
+notebooks, a typed and tested utility package, and algorithms implemented with
+NumPy only (k-means++, PCA, ridge regression, Welford statistics, stride tricks),
+wrapped in modern Python tooling.
 
-This project isn't just a learning exercise — it's a **complete reference toolkit**, **interview-ready resource**, and a **portfolio-quality project** that showcases your fluency with one of Python’s most essential libraries for scientific computing and data analysis.
-
----
-
-## 🚀 Why This Project Matters
-
-> Most learners stop at tutorials. This repository takes you further — by combining theory, implementation, real-world use cases, and production practices in one place.
-
-✅ Covers **100% of NumPy's essential concepts**  
-✅ Demonstrates **clean project structure and modular code reuse**  
-✅ Includes **interview-ready topics** like broadcasting, vectorization, and matrix algebra  
-✅ Provides **Jupyter notebooks + Python utility scripts + cheat sheet**  
-✅ Ends with a **K-Means algorithm from scratch with Elbow Method** — great for resumes
+It is meant to be three things at once: a **learning path**, a **reference
+toolkit** you can drop into other projects, and a **portfolio-quality codebase**
+with CI, type checking, property-based tests and a Docker image.
 
 ---
 
-## 📌 Project Objectives
+## ✨ What's inside
 
-- 🔍 **Master Core NumPy Syntax** through progressively organized notebooks
-- 🔄 **Understand Memory Efficiency**: broadcasting, vectorization, views vs. copies
-- ⚙️ **Practice Clean Coding** using reusable utility scripts in `/scripts`
-- 🧠 **Explore Real-World Scenarios**: regression, simulations, image ops, clustering
-- 📂 **Build a Reference Toolkit** for revision, projects, and technical interviews
+| Area | Highlights |
+| --- | --- |
+| **K-Means from scratch** | k-means++ seeding, restarts (`n_init`), empty-cluster repair, O(n·k) distance computation via ‖x‖²−2x·c+‖c‖², silhouette score, elbow detection, a scikit-learn-style `KMeans` class |
+| **Linear algebra** | lstsq / QR / Cholesky least squares, ridge regression, forward & back substitution, modified Gram-Schmidt, power iteration, PCA via SVD, condition numbers |
+| **Statistics** | Axis-aware, division-safe normalisers, skew/kurtosis, `RunningStats` (Welford + Chan merge), bootstrap CIs, weighted stats, moving averages, ECDF, entropy |
+| **Arrays & memory** | View vs. copy detection, memory flags, broadcasting explained axis by axis, human-readable sizes |
+| **Performance** | `timeit_compare` (checks outputs agree), zero-copy `rolling_windows` / `strided_blocks`, chunked processing |
+| **I/O** | `.npy`/`.npz` (optionally compressed), delimited text with missing values, memory maps; all path-like aware |
+| **App** | Streamlit K-Means explorer with PCA projection, elbow curve, silhouette and CSV export |
+
+Every public function is type-annotated, documented, and covered by unit tests
+plus [hypothesis](https://hypothesis.readthedocs.io/) property-based tests
+(coverage ≈ 96%). Randomness flows through `numpy.random.Generator` everywhere,
+so results are reproducible with a `seed=` argument and no global state.
 
 ---
 
-## 🧱 Folder Structure
+## 🚀 Quick start
 
 ```bash
-NumPyMasterPro/
-├── notebooks/                 # 📓 Themed Jupyter Notebooks (core + advanced topics)
-├── scripts/                   # 🛠️ Modular, reusable Python utilities
-├── datasets/                  # 📁 Data files used in notebooks
-├── docs/                      # 📜 Cheat sheets and markdown-based quick notes
-├── requirements.txt           # 📦 Minimal dependencies to run the project
-├── requirements_dev.txt       # 📦 Full dev environment
-├── .env.example               # 🛡️ Sample env file for Docker-based config (login-free setup)
-├── docker-compose.yml         # 🐳 Multi-container orchestration for Jupyter Lab
-├── Dockerfile                 # 🐳 Docker image setup using Jupyter minimal notebook base
-├── .gitignore                 # ❌ Files to exclude from version control
-└── README.md                  # 📘 This file!
+git clone https://github.com/SatvikPraveen/NumPyMasterPro.git
+cd NumPyMasterPro
+
+# Option A: uv (fast)
+uv venv .venv && source .venv/bin/activate
+uv pip install -e ".[dev,app,notebooks]"
+
+# Option B: pip
+python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -e ".[dev,app,notebooks]"
+
+make check          # ruff + mypy + full test suite
+make notebooks      # Jupyter Lab
+make streamlit      # K-Means explorer at http://localhost:8501
 ```
 
----
+Only `numpy` and `pandas` are required at runtime; `app`, `notebooks` and `dev`
+are optional extras (see `pyproject.toml`).
 
-## 🧮 Topics Covered
-
-| Notebook                          | Description                                                  |
-| --------------------------------- | ------------------------------------------------------------ |
-| `01_array_basics.ipynb`           | Array creation, types, shapes, memory attributes             |
-| `02_indexing_slicing.ipynb`       | Indexing, slicing, masking, `.take()`, `.put()`              |
-| `03_array_manipulation.ipynb`     | Reshaping, stacking, splitting, tiling, padding              |
-| `04_math_operations.ipynb`        | Element-wise ops, aggregation, rounding, broadcasting        |
-| `05_linear_algebra.ipynb`         | Dot product, inverse, norms, eig/SVD, solving systems        |
-| `06_statistics_probability.ipynb` | Descriptive stats, histograms, correlations, sampling        |
-| `07_masking_conditions.ipynb`     | `where`, `select`, logical ops, `nonzero`, `isfinite`, etc.  |
-| `08_file_io_memory.ipynb`         | `save`, `load`, `memmap`, vectorize, views vs. copies        |
-| `09_real_world_cases.ipynb`       | Regression, image ops, time-series scaling, simulations      |
-| `10_kmeans_from_scratch.ipynb`    | 🎯 BONUS: K-Means Clustering + Elbow Method using NumPy only |
-
----
-
-## 🧰 Utility Scripts
-
-| File                      | Purpose                                                        |
-| ------------------------- | -------------------------------------------------------------- |
-| `array_utils.py`          | Inspect shapes, types, identities, and metadata                |
-| `linear_algebra_utils.py` | Matrix algebra: dot, inverse, SVD, eigenvalues                 |
-| `math_utils.py`           | Element-wise math: power, root, trig, rounding, logs, exponent |
-| `aggregation_utils.py`    | Sum, mean, std, var, min, max — global & axis-wise             |
-| `stats_utils.py`          | Z-score, normalization, correlation, histogram bins            |
-| `logical_utils.py`        | Boolean logic, masking, conditionals (`any`, `all`, `where`)   |
-| `kmeans_utils.py`         | K-Means from scratch, inertia calculation, and centroid init   |
-
-Example usage:
+### 30-second tour
 
 ```python
-# Direct module import
-from scripts.kmeans_utils import kmeans, compute_inertia
+import numpy as np
+from scripts import KMeans, generate_data, silhouette_score, elbow_point, compute_inertia
+from scripts.linear_algebra_utils import pca, ridge_regression, closed_form_linear_regression
+from scripts.stats_utils import RunningStats, bootstrap_ci, zscore_normalize
+from scripts.perf_utils import timeit_compare, rolling_windows
 
-# Or use convenient re-exports from __init__.py
-from scripts import kmeans, describe_array, minmax_normalize
+X = generate_data(n_per_cluster=100, seed=0)          # 3 Gaussian blobs, (300, 2)
+
+km = KMeans(n_clusters=3, seed=0).fit(X)               # k-means++, 10 restarts
+km.inertia_, km.n_iter_, silhouette_score(X, km.labels_)
+
+ks = range(1, 9)
+elbow_point(list(ks), compute_inertia(X, ks, seed=0))  # -> 3
+
+w = closed_form_linear_regression(X[:, :1], X[:, 1])   # SVD-based lstsq; w[0] is the intercept
+w_ridge = ridge_regression(X[:, :1], X[:, 1], alpha=1.0)
+
+res = pca(X, n_components=1)                           # components, explained_variance_ratio, transformed
+
+rs = RunningStats()
+for chunk in np.array_split(X[:, 0], 10):              # stream data without a second pass
+    rs.update(chunk)
+rs.mean, rs.std()
+
+bootstrap_ci(X[:, 0], np.median, seed=0)               # percentile bootstrap, fully vectorised
+
+timeit_compare({"vectorised": lambda a: a * 2,
+                "loop": lambda a: np.array([v * 2 for v in a])}, X[:, 0])
 ```
 
 ---
 
-## 🎛️ Streamlit Frontend (Interactive Demo)
+## 🧱 Project layout
 
-You can try the K-Means algorithm with different datasets or number of clusters using:
+```
+NumPyMasterPro/
+├── notebooks/                # 📓 10 themed notebooks (basics → K-Means from scratch)
+├── scripts/                  # 🛠️ Installable package `numpymasterpro` (import as `scripts`)
+│   ├── array_utils.py        #    metadata, views vs copies, broadcasting diagnostics
+│   ├── linear_algebra_utils.py  # solvers, factorisations, regression, PCA
+│   ├── stats_utils.py        #    normalisers, online stats, bootstrap, moving averages
+│   ├── kmeans_utils.py       #    k-means++ / Lloyd / silhouette / elbow / KMeans class
+│   ├── perf_utils.py         #    timing, stride tricks, chunked processing
+│   ├── io_utils.py           #    npy / npz / txt / memmap
+│   ├── math_utils.py, aggregation_utils.py, logical_utils.py
+├── tests/                    # 🧪 unit tests, hypothesis property tests, headless app tests
+├── datasets/                 # 📁 sample data used by the notebooks
+├── docs/                     # 📜 cheat sheet, testing guide, implementation notes
+├── kmeans_app.py             # 🎛️ Streamlit explorer
+├── pyproject.toml            # 📦 metadata + ruff / mypy / pytest / coverage config
+├── Dockerfile, docker-compose.yml, Makefile, .pre-commit-config.yaml
+└── .github/workflows/ci.yml  # 🤖 lint → tests (4 Pythons × 3 OSes) → notebooks → security → docker
+```
+
+---
+
+## 🧮 Notebooks
+
+| Notebook | Description |
+| --- | --- |
+| `01_array_basics.ipynb` | Array creation, dtypes, shapes, memory attributes |
+| `02_indexing_slicing.ipynb` | Indexing, slicing, masking, `.take()`, `.put()` |
+| `03_array_manipulation.ipynb` | Reshaping, stacking, splitting, tiling, padding |
+| `04_math_operations.ipynb` | Element-wise ops, aggregation, rounding, broadcasting |
+| `05_linear_algebra.ipynb` | Products, inverse, norms, eig/SVD, solving systems |
+| `06_statistics_probability.ipynb` | Descriptive stats, histograms, correlation, sampling |
+| `07_masking_conditions.ipynb` | `where`, `select`, logical ops, `nonzero`, `isfinite` |
+| `08_file_io_memory.ipynb` | `save`/`load`, memmap, vectorize, views vs. copies |
+| `09_real_world_cases.ipynb` | Regression, image ops, time-series scaling, simulation |
+| `10_kmeans_from_scratch.ipynb` | 🎯 K-Means + Elbow Method using NumPy only |
+
+Notebooks import the utilities directly (`from kmeans_utils import kmeans`), and
+CI executes every notebook top-to-bottom on each push.
+
+---
+
+## 🧪 Quality gates
+
+```bash
+make lint           # ruff check
+make format         # ruff --fix + ruff format
+make typecheck      # mypy (strict-ish, no implicit Optional)
+make test           # pytest with branch coverage
+make test-props     # hypothesis property tests only
+make notebooks-exec # execute all notebooks headlessly
+make precommit      # install pre-commit hooks
+```
+
+The CI pipeline (`.github/workflows/ci.yml`) runs lint → tests on Python
+3.10–3.13 across Ubuntu/macOS/Windows → notebook execution → bandit + pip-audit
+→ Docker build & smoke test. See [docs/TESTING.md](docs/TESTING.md) for the
+testing guide.
+
+---
+
+## 🐳 Docker
+
+```bash
+docker compose up --build            # Jupyter Lab  → http://localhost:8889
+docker compose --profile app up app  # Streamlit    → http://localhost:8501
+docker compose --profile app down
+```
+
+The image is a multi-stage `python:3.12-slim` build with dependencies resolved by
+uv, runs as an unprivileged user, and reads `JUPYTER_TOKEN` / `JUPYTER_PASSWORD`
+from the environment (empty by default for a login-free local lab). Copy
+`.env.example` to `.env` to override ports and credentials.
+
+---
+
+## 🎛️ Streamlit K-Means explorer
 
 ```bash
 streamlit run kmeans_app.py
 ```
 
-This allows you to upload `.csv` files, set cluster count, and visualize results in real time.
-Great for experiments, education, and showcasing clustering interactively.
+Pick demo blobs or upload a CSV, choose features (more than two are projected
+with the project's own PCA), tune `k`, initialisation, restarts and seed, then
+read off inertia, iterations, silhouette, the convergence curve and an elbow
+plot with a suggested `k`. Export the labelled rows as CSV.
 
 ---
 
-## 🐳 Docker-Based Setup (Optional)
+## 🤝 Contributing
 
-Prefer running in a **containerized Jupyter Lab** environment?
-
-```bash
-docker compose up --build
-```
-
-Then open the browser at:
-👉 [http://localhost:8889](http://localhost:8889)
-
-> You can also stop the container with:
-
-```bash
-docker compose down --volumes --remove-orphans
-```
-
----
-
-## 🔐 Authentication & Security
-
-This project is configured for **login-free use** of Jupyter Lab — no password or token required.
-
-- ✅ `.env.example` is included with recommended settings.
-- 🚫 `.env` is deliberately **excluded** from the repo (add your own if needed).
-- 🛡️ You may modify the `docker-compose.yml` to add a token or hashed password later.
-
----
-
-## 🧠 Recommended Use
-
-- ✍️ Study each notebook sequentially and refer back as needed
-- 🧪 Use `/scripts/` functions in other projects or interview tasks
-- 🧵 Treat `docs/numpy_cheatsheet.md` as your quick review guide
-- 🧠 Use `10_kmeans_from_scratch.ipynb` in your resume to show NumPy fluency
-- 💡 Add your own notebooks (e.g., PCA from scratch, numerical integration, etc.)
-
----
-
-## 🔧 Getting Started (Without Docker)
-
-1. **Clone the repo**
-
-   ```bash
-   git clone https://github.com/SatvikPraveen/NumPyMasterPro.git
-   cd NumPyMasterPro
-   ```
-
-2. **Create & activate a virtual environment**
-
-   ```bash
-   python -m venv venv
-   source venv/bin/activate        # On Windows: venv\Scripts\activate
-   pip install -r requirements.txt
-   ```
-
-3. **Launch the Jupyter Lab interface**
-
-   ```bash
-   jupyter lab
-   ```
-
----
-
-## 🧪 Testing
-
-**NumPyMasterPro** includes a comprehensive test suite with **80+ unit tests** covering all utility modules.
-
-### Quick Testing
-
-```bash
-# Install test dependencies
-pip install pytest pytest-cov
-
-# Run all tests
-pytest
-
-# Run with coverage
-pytest --cov=scripts --cov-report=term-missing
-```
-
-### Using Makefile Commands
-
-```bash
-make test              # Run all tests
-make test-coverage     # Generate coverage report
-make lint              # Check code quality
-make format            # Auto-format code
-make all               # Run complete checks
-```
-
-### Test Coverage
-
-- ✅ Array utilities (describe, compare, flags)
-- ✅ Logical operations (any, all, where, masking)
-- ✅ K-Means algorithm (clustering, inertia)
-- ✅ Math operations (arithmetic, trig, rounding)
-- ✅ Linear algebra (matrices, eigenvalues, SVD)
-- ✅ Statistics (normalization, correlation)
-
-📖 **Detailed testing guide:** [TESTING.md](docs/TESTING.md)
-
-### CI/CD Pipeline
-
-Automated testing runs on:
-- 🔄 Every push to `main`/`develop`
-- 🔄 All pull requests  
-- ✅ Multi-OS (Ubuntu, macOS, Windows)
-- ✅ Python 3.10, 3.11, 3.12
-- ✅ Code linting & formatting checks
-- ✅ Notebook validation
-- ✅ Docker build verification
-
----
+Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) and the
+[Code of Conduct](CODE_OF_CONDUCT.md). Run `make check` before opening a PR.
 
 ## 📄 License
 
-This project is licensed under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0). See the [LICENSE](./LICENSE) file for more details.
-
----
+GNU General Public License v3.0 — see [LICENSE](./LICENSE).
 
 ## 🌟 Showcase & Star
 

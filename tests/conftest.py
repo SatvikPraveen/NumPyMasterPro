@@ -2,8 +2,15 @@
 Pytest configuration and shared fixtures for NumPyMasterPro tests
 """
 
+import os
+
 import numpy as np
 import pytest
+
+# Streamlit (used by tests/test_app.py) POSTs usage statistics on every script
+# run; without network access that call blocks for ~20 s per run. Opt out
+# before streamlit can be imported anywhere in the session.
+os.environ.setdefault("STREAMLIT_BROWSER_GATHER_USAGE_STATS", "false")
 
 
 @pytest.fixture

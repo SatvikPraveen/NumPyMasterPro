@@ -9,10 +9,7 @@ from pathlib import Path
 
 import pytest
 
-# Streamlit tries to POST usage statistics on every script run; on a machine
-# without network access that call blocks for ~20 s per run and makes the
-# suite look hung. Disable it before streamlit is imported.
-os.environ.setdefault("STREAMLIT_BROWSER_GATHER_USAGE_STATS", "false")
+os.environ.setdefault("STREAMLIT_BROWSER_GATHER_USAGE_STATS", "false")  # see conftest.py
 
 pytest.importorskip("streamlit")
 pytest.importorskip("matplotlib")
