@@ -227,6 +227,9 @@ def zscore_normalize(arr: npt.ArrayLike, axis: int | None = None, ddof: int = 0)
     x = np.asarray(arr, dtype=float)
     mean = np.mean(x, axis=axis, keepdims=True)
     std = np.std(x, axis=axis, ddof=ddof, keepdims=True)
+    # A slice whose range is exactly zero is constant even if rounding in the
+    # mean leaves a std of a few ulps; force those denominators to zero.
+    std = np.where(np.ptp(x, axis=axis, keepdims=True) == 0, 0.0, std)
     return _safe_divide(x - mean, std)
 
 
@@ -483,7 +486,8 @@ def entropy(counts: npt.ArrayLike, base: float | None = None) -> float:
     total = p.sum()
     if total <= 0:
         raise ValueError("counts must not sum to zero")
-    p = p[p > 0] / total
+    p = p / total
+    p = p[p > 0]  # filter *after* normalising: tiny counts can underflow to 0
     h = float(-(p * np.log(p)).sum())
     return h / np.log(base) if base is not None else h
 
