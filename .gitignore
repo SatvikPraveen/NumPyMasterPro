@@ -9,6 +9,7 @@ __pycache__/
 
 # Virtual environment
 venv/
+.venv/
 numpy_env/
 env/
 ENV/
@@ -46,8 +47,9 @@ dist/
 *.egg-info/
 .eggs/
 
-# MyPy
+# MyPy / Ruff
 .mypy_cache/
+.ruff_cache/
 .dmypy.json
 dmypy.json
 

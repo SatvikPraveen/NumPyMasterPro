@@ -1,0 +1,131 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "numpymasterpro"
+version = "2.0.0"
+description = "Hands-on NumPy mastery: utilities, notebooks, and algorithms from scratch."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "GPL-3.0-or-later" }
+authors = [{ name = "Satvik Praveen", email = "satvikpraveen707@gmail.com" }]
+keywords = ["numpy", "linear-algebra", "statistics", "kmeans", "education"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Education",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Mathematics",
+]
+dependencies = [
+  "numpy>=1.26",
+  "pandas>=2.0",
+]
+
+[project.optional-dependencies]
+app = ["streamlit>=1.32", "matplotlib>=3.8"]
+notebooks = ["jupyterlab>=4.0", "matplotlib>=3.8"]
+dev = [
+  "pytest>=8.0",
+  "pytest-cov>=4.1",
+  "pytest-xdist>=3.5",
+  "hypothesis>=6.100",
+  "ruff>=0.6",
+  "mypy>=1.10",
+  "pre-commit>=3.7",
+  "nbconvert>=7.16",
+  "nbformat>=5.10",
+  "ipykernel>=6.29",
+  "bandit>=1.7",
+]
+
+[project.urls]
+Homepage = "https://github.com/SatvikPraveen/NumPyMasterPro"
+Repository = "https://github.com/SatvikPraveen/NumPyMasterPro"
+Issues = "https://github.com/SatvikPraveen/NumPyMasterPro/issues"
+
+[tool.setuptools]
+packages = ["scripts"]
+
+# ---------------------------------------------------------------------------
+# Ruff: linting + formatting (replaces flake8, black, isort)
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+extend-exclude = ["notebooks", ".venv", "venv", "build", "dist"]
+
+[tool.ruff.lint]
+select = [
+  "E", "W",   # pycodestyle
+  "F",        # pyflakes
+  "I",        # isort
+  "UP",       # pyupgrade
+  "B",        # bugbear
+  "NPY",      # numpy-specific rules (legacy RNG, deprecated aliases)
+  "RUF",      # ruff-native rules
+  "SIM",      # simplify
+  "PT",       # pytest style
+]
+ignore = [
+  "E501",     # line length handled by formatter
+  "RUF001", "RUF002", "RUF003",  # allow unicode in docstrings/comments
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["PT011"]   # broad pytest.raises is fine in educational tests
+
+[tool.ruff.lint.isort]
+known-first-party = ["scripts"]
+
+[tool.ruff.format]
+quote-style = "double"
+docstring-code-format = true
+
+# ---------------------------------------------------------------------------
+# mypy
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.10"
+files = ["scripts"]
+warn_unused_ignores = true
+warn_redundant_casts = true
+no_implicit_optional = true
+check_untyped_defs = true
+ignore_missing_imports = true
+
+# ---------------------------------------------------------------------------
+# pytest + coverage
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-ra --strict-markers --tb=short --cov=scripts --cov-report=term-missing"
+filterwarnings = [
+  "error::DeprecationWarning:scripts",
+]
+markers = [
+  "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+  "integration: marks tests as integration tests",
+  "unit: marks tests as unit tests",
+]
+
+[tool.coverage.run]
+source = ["scripts"]
+branch = true
+omit = ["*/tests/*", "*/__pycache__/*"]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+exclude_lines = ["pragma: no cover", "if TYPE_CHECKING:", "if __name__ == .__main__.:"]
+
+[tool.coverage.html]
+directory = "htmlcov"
